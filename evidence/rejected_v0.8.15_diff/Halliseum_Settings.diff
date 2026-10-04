@@ -1,0 +1,39 @@
+--- /mnt/data/fg814/workers/Halliseum_Settings.ps1	2026-10-04 09:55:26.000000000 +0000
++++ /mnt/data/fg815/workers/Halliseum_Settings.ps1	2026-10-04 10:09:20.000000000 +0000
+@@ -340,13 +340,15 @@
+  Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`" -AppDir `"$AppDir`" -Voice `"$voice`" -Persona `"$persona`" -CoachingLevel `"$coachingLevel`" -PlayerName `"$playerName`"" -WindowStyle Hidden|Out-Null
+ })
+ $IdentifyDisplaysButton.Add_Click({Show-FGDisplayIdentify -Seconds 5})
+-$stateRoot=[Environment]::ExpandEnvironmentVariables([string]$config.GoogleDriveRoot);if(-not$stateRoot){$stateRoot='G:\My Drive\Halliseum Coach Bridge'};$calStatusPath=Join-Path $stateRoot 'UltimateCoach\range_calibration_status.json';$clubCalStatusPath=Join-Path $AppDir 'club_selector_calibration_status.json';$legacyClubCalStatusPath=Join-Path $stateRoot 'UltimateCoach\club_selector_calibration_status.json';$clubDetectStatusPath=Join-Path $stateRoot 'UltimateCoach\club_cheat_status.json'
++$stateRoot=[Environment]::ExpandEnvironmentVariables([string]$config.GoogleDriveRoot);if(-not$stateRoot){$stateRoot='G:\My Drive\Halliseum Coach Bridge'};$calStatusPath=Join-Path $stateRoot 'UltimateCoach\range_calibration_status.json';$clubCalStatusPath=Join-Path $AppDir 'club_selector_calibration_status.json';$legacyClubCalStatusPath=Join-Path $stateRoot 'UltimateCoach\club_selector_calibration_status.json';$clubDetectStatusPath=Join-Path $stateRoot 'UltimateCoach\club_cheat_status.json';$clubDetectLocalStatusPath=Join-Path $AppDir 'club_detection_test_status.json';$script:lastClubDetectNotice=''
+ function Update-RangeCalibrationStatus{
+  try{if(Test-Path $calStatusPath){$cs=Get-Content $calStatusPath -Raw|ConvertFrom-Json;$RangeCalibrationStatus.Text=[string]$cs.message;return}}catch{}
+  if([bool]$config.RangeNavCalibrated){$RangeCalibrationStatus.Text='Calibrated. Coach Mode will use your saved GSPro-relative Practice and Practice Range positions.'}else{$RangeCalibrationStatus.Text='Not calibrated yet. Calibration is recommended for multi-monitor setups.'}
+ }
+ Update-RangeCalibrationStatus
+ function Update-ClubSelectorCalibrationStatus{
++ # v0.8.15: fresh club-test results outrank the older calibration-success status.
++ try{if(Test-Path $clubDetectLocalStatusPath){$ds=Get-Content $clubDetectLocalStatusPath -Raw|ConvertFrom-Json;if([string]$ds.state -like 'club_detection_test*'){$ClubSelectorCalibrationStatus.Text=[string]$ds.message;$stamp=[string]$ds.updated;if($stamp -and $stamp-ne$script:lastClubDetectNotice){$script:lastClubDetectNotice=$stamp;$icon=if([string]$ds.state-eq'club_detection_test_success'){[System.Windows.MessageBoxImage]::Information}else{[System.Windows.MessageBoxImage]::Warning};[System.Windows.MessageBox]::Show([string]$ds.message,'Factor Golf Club Detection Test',[System.Windows.MessageBoxButton]::OK,$icon)|Out-Null};return}}}catch{}
+  try{if(Test-Path $clubCalStatusPath){$cs=Get-Content $clubCalStatusPath -Raw|ConvertFrom-Json;$ClubSelectorCalibrationStatus.Text=[string]$cs.message;return}}catch{}
+  try{if(Test-Path $legacyClubCalStatusPath){$cs=Get-Content $legacyClubCalStatusPath -Raw|ConvertFrom-Json;$ClubSelectorCalibrationStatus.Text=[string]$cs.message;return}}catch{}
+  try{if(Test-Path $clubDetectStatusPath){$ds=Get-Content $clubDetectStatusPath -Raw|ConvertFrom-Json;if([string]$ds.state -like 'club_detection_test*'){$ClubSelectorCalibrationStatus.Text=[string]$ds.message;return}}}catch{}
+@@ -371,6 +373,8 @@
+  if(-not$gp){[System.Windows.MessageBox]::Show('Open GSPro to the PRACTICE RANGE first, with the club selector visible.','Factor Golf Club Selector Calibration',[System.Windows.MessageBoxButton]::OK,[System.Windows.MessageBoxImage]::Information)|Out-Null;return}
+  Remove-Item $clubCalStatusPath -Force -ErrorAction SilentlyContinue
+  Remove-Item $legacyClubCalStatusPath -Force -ErrorAction SilentlyContinue
++ Remove-Item $clubDetectLocalStatusPath -Force -ErrorAction SilentlyContinue
++ $script:lastClubDetectNotice=''
+  try{[ordered]@{state='launching';message='Calibration is starting. Factor Golf will bring GSPro forward. Click directly on the current club name/selector when prompted.';updated=(Get-Date).ToString('o')}|ConvertTo-Json|Set-Content $clubCalStatusPath -Encoding UTF8}catch{}
+  $ClubSelectorCalibrationStatus.Text='Calibration is starting. Watch for the Factor Golf calibration prompt.'
+  try{
+@@ -389,7 +393,9 @@
+ $TestClubDetectionButton.Add_Click({
+  $gp=Get-Process -Name 'GSPro' -ErrorAction SilentlyContinue|Where-Object{$_.MainWindowHandle -ne 0}|Select-Object -First 1;if(-not$gp){[System.Windows.MessageBox]::Show('Open GSPro on the Practice Range with the club selector visible before testing club detection.','Factor Golf')|Out-Null;return}
+  Remove-Item $clubDetectStatusPath -Force -ErrorAction SilentlyContinue
+- $script=Join-Path $AppDir 'workers\Halliseum_Club_Cheat_Watcher.ps1';Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`" -Root `"$stateRoot`" -AppDir `"$AppDir`" -TestOnce" -WindowStyle Hidden|Out-Null
++ Remove-Item $clubDetectLocalStatusPath -Force -ErrorAction SilentlyContinue
++ $script:lastClubDetectNotice='';$ClubSelectorCalibrationStatus.Text='Testing the calibrated GSPro club selector now...'
++ try{$script=Join-Path $AppDir 'workers\Halliseum_Club_Cheat_Watcher.ps1';if(-not(Test-Path $script)){throw 'Club detection worker is missing.'};$p=Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`" -Root `"$stateRoot`" -AppDir `"$AppDir`" -TestOnce" -WindowStyle Hidden -PassThru;Start-Sleep -Milliseconds 250;if($p.HasExited -and $p.ExitCode -notin @(0,6)){throw ('Club detection worker exited with code '+$p.ExitCode)}}catch{$msg='Club detection test could not start: '+$_.Exception.Message;$ClubSelectorCalibrationStatus.Text=$msg;[System.Windows.MessageBox]::Show($msg,'Factor Golf Club Detection Test',[System.Windows.MessageBoxButton]::OK,[System.Windows.MessageBoxImage]::Error)|Out-Null}
+ })
+ $w.Add_Closed({try{$calTimer.Stop()}catch{}})
+ $CancelButton.Add_Click({$w.Close()})

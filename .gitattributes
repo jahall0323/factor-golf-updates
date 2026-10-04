@@ -1,0 +1,7 @@
+# Preserve the imported accepted baseline byte for byte, including CRLF/BOM.
+src/** -text
+evidence/** -text
+docs/migration/** -text
+*.zip binary
+*.png binary
+*.ico binary

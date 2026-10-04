@@ -1,0 +1,9 @@
+﻿THE HALLISEUM CONTROL CENTER v0.7.2 - CONTRAST & ENCODING HOTFIX
+
+- Performance table headers now use a dark green background with bright white text.
+- Performance body, help and status text is brighter for projector/touchscreen readability.
+- Settings now uses explicit high-contrast styling for text, checkboxes, combo boxes, text boxes and buttons.
+- Unicode dash, ellipsis and degree characters were removed from visible PowerShell UI strings to prevent garbled characters on Windows PowerShell.
+- PowerShell scripts are saved with a UTF-8 BOM for Windows PowerShell 5.1 compatibility.
+- Settings wording now says "home screen" instead of the removed carousel.
+- No coaching, bag-learning, club-detection or mode behavior was intentionally changed.

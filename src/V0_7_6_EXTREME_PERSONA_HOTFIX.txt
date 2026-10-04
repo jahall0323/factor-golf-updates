@@ -1,0 +1,9 @@
+Halliseum Control Center v0.7.6
+EXTREME PERSONA HOTFIX
+
+- Added Coach Persona: Extreme.
+- Extreme is labeled R+ / Drunk Golf Buddy in Settings.
+- Extreme uses much heavier profanity, sarcastic trash talk, deliberately corny real-world analogies tied back to the golf issue, and a corny dad joke in the initial coaching conversation.
+- Coaching rigor, BLP data limitations, SwingNerds evidence rules, and the one-primary-fix structure do not change.
+- Extreme still avoids slurs, threats, hateful language, and harassment.
+- Voice test now demonstrates the Extreme tone before saving.

@@ -1,0 +1,8 @@
+Halliseum Control Center v0.7.1 - Static Home Hotfix
+
+- Removed the swipe carousel completely.
+- Removed swipe gesture handling and left/right/Enter carousel controls.
+- Replaced it with large, fixed touch-first mode tiles.
+- Modes only launch from an intentional tap/click on their own tile.
+- Preserved Coach Mode, GSPro Only, SwingNerds, FSX submenu, Fairgrounds, Performance, Settings, update controls, and End Set & Coach Me behavior.
+- This is a functionality hotfix; final visual/logo polish remains deferred.

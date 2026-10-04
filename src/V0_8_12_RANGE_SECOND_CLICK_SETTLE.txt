@@ -1,0 +1,11 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.12
+
+Purpose:
+Fix the v0.8.11 cold-start regression where Coach Mode could click Practice successfully but fire the calibrated GS Pro Practice Range click before the Practice submenu had finished rendering and become reliably interactive.
+
+Changes:
+- Preserve the working calibrated Practice click.
+- After Practice opens, enforce a minimum render delay and require the GSPro window to remain visually stable before attempting the Practice Range click.
+- Retry the calibrated Practice Range click up to three times, with a fresh settle check between attempts.
+- Do not modify the user's saved calibration coordinates.
+- Preserve v0.8.11 authoritative-club/no-guess rule and single-overlay presentation lane.

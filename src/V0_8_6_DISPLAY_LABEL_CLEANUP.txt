@@ -1,0 +1,9 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.6
+
+Display label cleanup
+
+- Normal display dropdowns now show friendly monitor name + current resolution + Primary only when Windows marks that monitor as the main display.
+- Low-level Windows DISPLAY1 / DISPLAY2 / DISPLAY3 identifiers are retained for diagnostics but removed from normal user-facing choices.
+- Display labels and Identify Displays overlays now use ASCII-only separators (| and x) to avoid encoding/font garbage on Windows/PowerShell hosts.
+- Friendly EDID/PnP hardware identity remains the stable routing key underneath.
+- GSPro remains AUTO (Recommended) by default.

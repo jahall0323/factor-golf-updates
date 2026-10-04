@@ -1,0 +1,15 @@
+Factor Golf Sim Control Center v0.8.9 - Direct HTTPS Updater
+
+- Adds provider-neutral direct HTTPS update feed support.
+- Direct feed is primary when UpdateFeedUrl is configured.
+- Synced Google Drive Updates folder is fallback only.
+- Package downloads retry up to three times and require HTTPS.
+- SHA-256 is mandatory for direct and local updates.
+- Package app_version.txt must match manifest version before install.
+- Updater stages the package and keeps up to two rollback snapshots.
+- Settings, encrypted API key, and update.log remain preserved.
+- If install validation fails, updater attempts to restore the previous app files.
+
+Production UpdateFeedUrl: https://raw.githubusercontent.com/jahall0323/factor-golf-updates/main/latest.json
+
+The feed is designed to fall back to the local Google Drive Updates folder until the GitHub repository is published.

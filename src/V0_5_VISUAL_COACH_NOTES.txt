@@ -1,0 +1,31 @@
+HALLISEUM CONTROL CENTER v0.5.0 - VISUAL COACH
+================================================
+
+PROJECTOR CARD DESIGN RULES
+- Designed to be readable from the hitting area, not from a desk.
+- One large priority, two large feels, and three visual comparisons.
+- No long coaching paragraphs on the projector card.
+- BALL FLIGHT: actual median launch vs a broad club reference window.
+- CLUB PATH: actual measured path vs a neutral stock-shot reference corridor.
+- DISPERSION: actual shot dots from the current set.
+- REFERENCE SETUP: club-specific ball position and stance visual.
+- The saved JSON still preserves the detailed explanation and confidence notes.
+
+DATA HONESTY
+- Reference windows are teaching guides, not claims of a personalized optimum.
+- BLP face angle / face-to-path placeholder zeros are never used.
+- Club path / AoA visuals only use actual available club data.
+- If AI fails, the card must not invent a diagnosis.
+
+VOICE v2
+- OpenAI speech is requested as MP3 and played through WPF MediaPlayer.
+- The previous build requested WAV and System.Media.SoundPlayer rejected the file,
+  which caused Halliseum to fall back to the robotic local Windows voice.
+- Windows robot fallback is OFF by default in v0.5.0. A cloud-voice failure is shown
+  as an error instead of pretending the fallback is the premium coach.
+- Default voice: marin, with conversational PGA-coach delivery instructions.
+
+TRUE LIVE VOICE
+- GPT-Live full-duplex voice is the long-term target for interruption and natural
+  back-and-forth. v0.5.0 fixes natural spoken coaching first while preserving the
+  existing automatic follow-up workflow.

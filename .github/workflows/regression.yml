@@ -1,0 +1,17 @@
+name: Baseline regression gates
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/check_regressions.py
+      - run: python -m unittest discover -s tests -v
+      - name: Windows PowerShell 5.1 syntax
+        shell: powershell
+        run: ./tools/check_powershell.ps1

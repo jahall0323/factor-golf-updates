@@ -1,0 +1,26 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.10
+
+RANGE NAVIGATION + CLUB SYNC RELIABILITY
+
+Changes:
+- Cold-start range navigation no longer treats a merely responsive GSPro window as main-menu ready.
+- GSPro cold starts must now reach a minimum process age and stable live window before calibrated navigation begins.
+- Calibrated Practice and Practice Range clicks now use local visual screen-change acknowledgement.
+- If a calibrated click produces no visible GSPro transition, Factor Golf refocuses and retries once.
+- Factor Golf will not blindly send the second calibrated click when the first click did not visibly change GSPro.
+- Range status now distinguishes waiting, ready, retrying, failed, UI/OCR verified, and visually confirmed states.
+- Coach Mode no longer overwrites current club state with Driver at every startup.
+- Club Cheat Sheet watcher silently reconciles the selected GSPro club before the first user club-change card when UI/screen data is available.
+- After K/I/U club shortcuts, Factor Golf now waits briefly for GSPro to apply the change and prefers the actual GSPro club from UI Automation or Windows screen OCR.
+- Generic UI Automation button numbers are no longer accepted as club identity. Club UI candidates are now stricter.
+- If actual club identity cannot be verified, adjacent-club inference remains a fallback, but only from the best known prior club state.
+- Fresh shot-log data can reconcile club state after a shot; stale pre-session shot data is ignored for that fallback.
+
+Preserved:
+- No automatic startup Driver Club Cheat Sheet.
+- K = Club Up; I = Club Down.
+- Existing GSPro range calibration coordinates.
+- Display routing, connector minimization, GSPro shortcut/update-friendly launch, and updater protections.
+- v0.8.9 direct HTTPS updater foundation with local Drive fallback.
+
+Real-machine verification required.

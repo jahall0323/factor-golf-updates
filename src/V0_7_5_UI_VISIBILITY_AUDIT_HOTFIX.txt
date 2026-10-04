@@ -1,0 +1,24 @@
+Halliseum Control Center v0.7.5
+UI VISIBILITY AUDIT HOTFIX
+
+This build performs a full readability pass across every current WPF surface:
+- Control Center home
+- floating Coach Controls
+- Settings
+- Performance
+- Coach Card
+- Club Cheat Sheet
+- FSX chooser
+- OpenAI key setup
+
+Fixes:
+- disabled END SET & COACH ME no longer falls back to the Windows white disabled-button theme
+- buttons use explicit high-contrast templates and disabled states
+- secondary/status text was brightened
+- Settings expander headers, dropdowns, fields, and helper text use explicit contrast
+- Performance tab/header/button contrast strengthened
+- Coach Card and Club Cheat Sheet supporting text strengthened
+- main header area given a safer minimum height
+- added UI_VISIBILITY_AUDIT.ps1 to catch explicit white-on-white styling before future packages are shipped
+
+This is a readability/functionality hotfix, not the final visual-design pass.

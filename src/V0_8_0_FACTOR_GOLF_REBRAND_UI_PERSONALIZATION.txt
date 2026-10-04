@@ -1,0 +1,26 @@
+﻿FACTOR GOLF SIM CONTROL CENTER v0.8.0
+
+FIRST FACTOR GOLF BRANDED RELEASE
+
+- Main brand: Factor Golf.
+- App: Factor Golf Sim Control Center.
+- User-facing Halliseum branding migrated to Factor Golf across the main control center, Settings, Performance, Coach Card, Club Cheat Sheet, API-key dialog and update messaging.
+- Legacy internal filenames and Drive paths intentionally remain for compatibility.
+
+PERSONALIZATION
+- "Coaching Level" is now labeled "Golfer Experience".
+- Choices remain Rookie, Amateur, Pro / Advanced.
+- PREVIEW COACH now combines Golfer Experience + Persona + Voice.
+- Preview wording changes materially by golfer experience instead of replaying the same lesson.
+- Hood Golf from v0.7.9 is preserved.
+- Club Cheat Sheet continues to adapt detail by golfer experience.
+
+UI VISIBILITY
+- Selected Performance tabs keep their normal dark background and switch selected text to gold.
+- Selected session rows and My Bag rows use gold text without a light selected background.
+- Settings dropdowns use dark high-contrast backgrounds; selected values use gold text instead of changing to a low-contrast fill.
+- Update button widened from 165 px to 235 px so INSTALL vX.X.X UPDATE is readable.
+
+UPDATER
+- Preserves the v0.7.7 app_version.txt / anti-repeat-loop behavior.
+- Existing config and encrypted API key remain preserved by the self-updater.

@@ -1,0 +1,15 @@
+This is the new Factor Golf Software project.
+
+Before changing any code:
+1. Read every file in the Factor Golf Software migration handoff, starting with 00_START_HERE.md.
+2. Use the connected Google Drive folder named `Factor Golf Software Migration` as the durable migration source.
+3. Inspect the accepted v0.8.14 source baseline and the rejected v0.8.15 diff.
+4. Check whether the GitHub repository `jahall0323/factor-golf-updates` now exists and is accessible.
+5. Tell me, in plain English:
+   - the accepted baseline;
+   - the current known broken items;
+   - what v0.8.15 regressed;
+   - the first engineering step you recommend.
+6. Do not build or publish a new release until you have completed that migration audit and I approve moving forward.
+
+The Halliseum is the final real-machine validation environment. Do not use me as the primary debugging harness when the issue can be found with source inspection, automated tests, or diagnostics first.

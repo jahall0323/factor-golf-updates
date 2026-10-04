@@ -1,0 +1,20 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.11
+CLUB TRUTH + SINGLE PRESENTATION LANE
+
+Real-machine v0.8.10 result:
+- Coach Mode automatic GSPro range navigation passed.
+- Club Cheat Sheets still drifted because pedal/key presses could fall back to internal adjacent-club inference.
+- Repeated Club Down presses at GSPro's lower selectable boundary could leave GSPro on Lob Wedge while Factor Golf's inferred state continued changing.
+- Coach Card and Club Cheat Sheet could overlap on the same routed display.
+
+v0.8.11:
+- K/I/U pedal or keyboard events are change TRIGGERS only, never club identity.
+- Rapid club-selection presses are coalesced; Factor Golf waits until input settles before reading GSPro.
+- Factor Golf retries actual GSPro club detection several times after the selection settles.
+- If GSPro remains on the same club at a boundary, Factor Golf respects that no-change result and opens no extra sheet.
+- If Factor Golf cannot verify the actual selected GSPro club, it opens NO Cheat Sheet rather than inferring a possibly wrong club.
+- Adjacent-club inference from pedal count is disabled for Cheat Sheet presentation.
+- Coach Card and Club Cheat Sheet now share one presentation lane so they cannot stack over one another.
+- A confirmed club change dismisses the existing Coach Card before showing the verified club sheet.
+- A newly opened Coach Card dismisses any existing Club Cheat Sheet.
+- v0.8.10 automatic range-navigation improvements are preserved.

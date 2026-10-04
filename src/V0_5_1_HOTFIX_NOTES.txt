@@ -1,0 +1,9 @@
+HALLISEUM CONTROL CENTER v0.5.1 HOTFIX
+
+Fixes:
+- Projector Coach Card preview now stays visible for the full 15-second preview.
+- Preview ignores stale live-session dismiss flags and follow-up state.
+- Monthly AI Budget always renders, even before budget.json exists or if it is malformed.
+- Corrects PowerShell currency-format interpolation bug that could make the budget value appear blank.
+
+No API key change is required.

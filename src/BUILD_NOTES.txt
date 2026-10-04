@@ -1,0 +1,89 @@
+Halliseum Control Center v0.5.0 VISUAL COACH
+
+NEW:
+- Visual-first projector card: actual vs reference ball flight, club path, and set dispersion.
+- Bigger typography and far less projector text.
+- Club-specific reference stance/ball-position graphic.
+- Local summary now retains lightweight visual shot dots without increasing paid prompt size.
+- Natural voice playback now requests MP3 and uses Windows MediaPlayer instead of SoundPlayer WAV playback.
+- Robotic Windows TTS fallback is OFF by default so a failed cloud voice cannot masquerade as the premium coach.
+- Default natural voice changed to marin with conversational PGA-coach instructions.
+
+IMPORTANT: reference launch/path windows are broad stock-shot teaching guides, not claims of a personalized optimal launch condition. BLP club data is shown only when available.
+
+Halliseum Control Center v0.5.0 MVP Patch
+
+Changes from v0.4.0 First Run:
+- Replaced PowerShell Read-Host API-key entry with branded WPF secure dialog.
+- Added explicit PASTE FROM CLIPBOARD button and Ctrl+V handling.
+- Shows detected key length without exposing the key.
+- Validates basic sk- key shape before saving.
+- Encrypts key using Windows DPAPI for the current Windows user.
+- Clears clipboard after successful save.
+- Added Google Drive update channel under Halliseum Coach Bridge\Updates.
+- Added in-app CHECK FOR UPDATE / INSTALL UPDATE control.
+- Added self-updater that preserves config.json and secrets, supports SHA256 validation, and relaunches Halliseum.
+- Updated UI version/status wording.
+- Updated paid coaching model pair to GPT-6.1 Sol for club-set coaching and GPT-6 Luna for simple follow-ups, with current standard token rates in the budget meter.
+- Existing one-club coach flow, pedal/mulligan behavior, budget protection, projector card, natural voice, and automatic follow-up conversation remain intact.
+
+Current app version: 0.4.1
+
+
+v0.5.0 fixes Windows PowerShell 5.1 request-body encoding by sending explicit UTF-8 bytes with application/json; charset=utf-8 to both Responses and TTS endpoints.
+
+
+v0.5.0 adds a live shot-data strip to the Coach Card, prevents blank Coach Cards, and shows a clearly labeled LOCAL DATA ONLY card if the AI request fails. It retains the v0.4.4 explicit UTF-8 API transport fix.
+
+
+v0.7.8 - Coaching Levels
+- Added Rookie / Amateur / Pro-Advanced coaching depth setting.
+- Coaching prompt and voice follow-ups honor selected level.
+- Persona remains independent.
+
+
+v0.7.9: Added Hood Golf persona and upgraded Coaching Level from mostly language depth to experience-based golf instruction assumptions. Preserved v0.7.7 updater version-marker behavior.
+
+
+FACTOR GOLF SIM CONTROL CENTER v0.8.0
+- User-facing rebrand to Factor Golf.
+- Golfer Experience label and combined Preview Coach.
+- Gold-text selected state without background swap in key selection controls.
+- Performance tab/list/grid contrast fixes.
+- Update button clipping fix.
+
+
+FACTOR GOLF SIM CONTROL CENTER v0.8.1
+------------------------------------
+- Stabilization release. This is not a 1.0/final-polish build.
+- Coach Mode range navigation now tries UI Automation, then Windows built-in OCR against the live GSPro window, then saved coordinates only as the final fallback.
+- Range navigation writes range_nav_status.json, range_nav_debug.json, and range_nav_ocr.txt for machine-specific diagnostics.
+- Connector minimization now enumerates all top-level windows, supports preferred connector PID/path, recognizes VGPconnect/ForesightForm signatures, and writes connector_window_diagnostics.json.
+- Club Cheat Sheet watcher now observes GSPro's default I/K/U club shortcuts while GSPro is foreground. It tries GSPro UI first and can infer the adjacent club from a configurable club order before the next shot is hit.
+- Settings ComboBoxes now use a full dark-theme template. Current/selected values use gold text; popup items remain dark with white normal text and gold selected/highlighted text.
+- Performance help copy now explains Recommended Carry in golfer language.
+- Home screen now reserves AI CADDY as COMING SOON. No caddie advice is enabled yet.
+- Internal Halliseum filenames/paths remain for compatibility.
+
+
+=== v0.8.7 ===
+Coach Mode startup sequencing/focus release: calibrated GSPro range positions are preferred, initial Club Cheat Sheet waits until range navigation finishes, floating Coach Controls removed, and matching GSPro Windows shortcuts are preferred to preserve normal launcher/update behavior.
+
+
+=== v0.8.8 ===
+Removed automatic startup Driver Club Cheat Sheet. Cheat Sheets now appear only after actual club changes, eliminating startup focus competition with GSPro range navigation.
+
+0.8.10
+Range navigation + club sync reliability: cold-start GSPro readiness gate, visual acknowledgement/retry for calibrated menu clicks, no forced Driver state, stricter selected-club reconciliation using GSPro UI/screen OCR before inference.
+
+v0.8.11
+- Club pedal/key events are triggers only; no card identity is inferred from click count.
+- Rapid club changes settle before GSPro is read; repeated boundary presses no longer walk Factor Golf past GSPro.
+- Unverified club = no Cheat Sheet.
+- Coach Card and Club Cheat Sheet are mutually exclusive on the presentation display.
+
+
+v0.8.12
+- Practice -> Practice Range second-click settle/retry reliability.
+- No calibration reset.
+- Preserves v0.8.11 club-truth and overlay arbitration behavior.

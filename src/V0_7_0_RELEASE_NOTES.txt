@@ -1,0 +1,50 @@
+THE HALLISEUM CONTROL CENTER v0.7.0
+FUNCTIONALITY FOUNDATION
+
+This build intentionally prioritizes flow and reliability over final visual polish.
+
+LOCKED HOME / MODE FLOW
+- Halliseum remains the Windows-startup front door for the simulator PC.
+- Home is now a large touch-first horizontal mode carousel.
+- Swipe/drag left or right, use arrow tiles, or keyboard arrows.
+- Tap the centered tile to enter.
+- Modes: Coach Mode, GSPro Only, SwingNerds, FSX, Fairgrounds, Performance, Settings.
+- FSX is one home tile and opens FSX Play / Pro / Premier choices.
+
+COACH MODE
+- Corrected startup order: GSPro first, wait for a real GSPro window, then launch/minimize the Foresight/Bushnell connector.
+- Floating END SET & COACH ME control means a foot pedal is optional.
+- Main Control Center also exposes END SET & COACH ME while Coach Mode is active.
+- Pedal remains supported.
+- Club changes start a fresh coaching set automatically.
+- If a club changes before coaching is requested, the prior club set is archived locally without a paid AI call.
+- Initial Driver remains the assumed GSPro range club, so the Driver Cheat Sheet doubles as a club-selection reminder.
+- Live club detection now looks at more GSPro UI Automation candidates, then falls back to the latest shot log.
+
+COACH CARD
+- Removed the temporary cheap shape-based golf illustrations.
+- Removed Reference Setup from the coaching card; generic club setup belongs in Club Cheat Sheet.
+- Card now prioritizes clean readable text/data until the final design phase.
+- Added WHAT LOOKED GOOD, FIX FIRST, ALSO SEEING, WHY IT MATTERS, NEXT 5 BALLS and data-used sections.
+
+PERFORMANCE
+- New Performance mode with Sessions and My Bag tabs.
+- Sessions are displayed by friendly date/time and club.
+- A session can be excluded from My Bag without deleting the report.
+- My Bag is a living map using recency-weighted, robust shot data.
+- Obvious low-energy mishits and extreme carry outliers are filtered.
+- Recency uses a configurable half-life so months of improvement gradually move the recommendation.
+- My Bag shows Recommended Carry, Typical Total when available, Reliable Carry Range, 30-day trend, confidence, valid-shot count, sessions and last update.
+- Reset Selected Club and Reset All My Bag Learning preserve the raw reports while starting learned mapping fresh.
+
+VOICE / SETTINGS
+- Settings now use expandable sections rather than one busy page.
+- Voice and Coach Persona selectors are separated.
+- Test Selected Voice plays a Halliseum coaching sample with that persona.
+- Added startup, Coach Mode behavior, app paths, Fairgrounds and My Bag recency settings.
+- Low-confidence Windows speech-recognition results are ignored instead of immediately becoming a follow-up question.
+
+DATA SAFETY
+- No OpenAI key is written to Drive.
+- Bag resets do not delete raw sessions.
+- Club-face metrics are still not invented; BLP one-dot limitations remain enforced.

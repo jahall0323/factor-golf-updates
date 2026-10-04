@@ -1,0 +1,31 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.2
+=======================================
+
+Purpose: repair the three v0.8.1 Coach Mode failures observed on the actual simulator PC.
+
+FIXES
+-----
+- Coach Mode starts range navigation immediately after launching GSPro instead of waiting behind connector/other setup work.
+- One-time v0.8.2 migration re-enables AutoOpenDrivingRange, MinimizeForesightConnector, ClubCheatSheetEnabled and the initial Driver prompt for installs that may have preserved old false values.
+- Range navigation recognizes the exact manual route: Practice -> GS Pro Practice Range.
+- Connector minimizer starts immediately and recognizes Visual Golf / VisualGolf / VGPconnect / ForesightForm signatures.
+- Connector watch runs longer and writes a dedicated minimize status file.
+- Club Cheat Sheet no longer waits up to 40 seconds for range navigation before listening for pedal changes.
+- Initial Driver Cheat Sheet appears independently shortly after Coach Mode starts.
+- Confirmed pedal mapping: K = Club Up, I = Club Down.
+- Club changes update session_state.json immediately.
+- Key polling tightened from 45 ms to 10 ms to reduce missed pedal taps.
+- Worker launch logging added so a future failure shows whether each worker actually started.
+
+DIAGNOSTICS
+-----------
+UltimateCoach\worker_launch_status.log
+UltimateCoach\range_nav_status.json
+UltimateCoach\range_nav_debug.json
+UltimateCoach\range_nav_ocr.txt
+UltimateCoach\connector_minimize_status.json
+UltimateCoach\connector_window_diagnostics.json
+UltimateCoach\club_cheat_status.json
+UltimateCoach\club_detection_events.log
+
+Updater anti-loop behavior from v0.7.7 remains preserved.

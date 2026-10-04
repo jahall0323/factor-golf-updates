@@ -1,0 +1,13 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.5
+
+DISPLAY IDENTIFICATION + STABLE MONITOR ROUTING
+
+- Replaces generic Display 1 / Display 2 / Display 3 labels with real monitor-friendly names when Windows/EDID provides them.
+- Dropdown labels also show the active physical resolution and Windows display-device ID.
+- Adds IDENTIFY DISPLAYS to temporarily show each detected monitor name on that physical screen.
+- Renames the Settings label from "GSPro / projector" to "GSPro".
+- GSPro defaults to AUTO (Recommended): Factor Golf follows the monitor where the live GSPro window is actually open.
+- A manual GSPro monitor choice remains available as an override, not the normal/default workflow.
+- Adds stable display keys so routing follows the selected physical monitor more reliably than Screen.AllScreens numeric order alone.
+- Existing numeric screen-index settings remain as compatibility fallbacks for older installs.
+- Uses Windows current display mode for the shown resolution, avoiding misleading DPI-scaled logical sizes when possible.

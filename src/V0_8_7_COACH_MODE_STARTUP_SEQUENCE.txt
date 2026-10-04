@@ -1,0 +1,31 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.7
+
+COACH MODE STARTUP / FOCUS FIX
+
+What changed
+- Removed the floating Factor Golf Coach Controls window completely.
+- Removed Coach Controls from Coach Mode behavior settings and Display & Screen Routing.
+- Existing old Coach Controls settings are discarded automatically and are no longer used.
+- When GSPro range calibration exists, Factor Golf now uses the calibrated Practice -> GS Pro Practice Range positions BEFORE trying UI Automation or OCR.
+- The range worker waits for the actual GSPro window to be responsive and stable rather than relying on one universal startup delay.
+- GSPro focus is reasserted immediately before both calibrated clicks so another startup window is much less likely to intercept them.
+- The initial Driver Club Cheat Sheet waits until range navigation has finished its startup attempt before appearing, so it cannot cover/intercept the Practice clicks.
+- Club Cheat Sheet startup still has a timeout and remains independent if range navigation fails, so one feature cannot permanently suppress the other.
+- GSPro launches through the matching Windows shortcut when Factor Golf can safely identify one for the configured GSPro executable. This preserves shortcut arguments and the user's normal launcher/update path. If no matching shortcut is found, Factor Golf falls back to the configured executable.
+
+Preserved
+- v0.8.6 friendly display labels and EDID/PnP routing.
+- GSPro AUTO display behavior.
+- Existing user range calibration coordinates.
+- Connector restore/repair blacklist and connector minimization.
+- Club Up / Club Down pedal detection.
+- Updater anti-repeat behavior.
+
+REAL-MACHINE TEST
+1. Close GSPro, SwingNerds, and Factor Golf.
+2. Install v0.8.7 through the normal updater.
+3. Start Coach Mode once. Do not manually click GSPro.
+4. Confirm GSPro follows its normal launch/update behavior.
+5. Confirm Factor Golf opens Practice -> GS Pro Practice Range.
+6. Confirm the Driver Cheat Sheet appears only AFTER the range navigation attempt.
+7. Confirm no Factor Golf Coach Controls window appears anywhere.

@@ -1,0 +1,23 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.8
+
+NO STARTUP DRIVER CHEAT SHEET
+
+WHY
+The v0.8.7 real-machine test still showed the initial Driver Club Cheat Sheet before GSPro finished automatic range navigation. Even though v0.8.7 tried to gate the popup, the extra startup overlay remained an unnecessary focus risk.
+
+CHANGE
+- Removed the automatic Driver Club Cheat Sheet at Coach Mode startup completely.
+- Removed the startup Driver reminder option from Settings.
+- Removed the old ClubCheatSheetInitialDriverPrompt setting from new defaults and strips the stale setting from upgraded configs.
+- Club Cheat Sheet watcher starts silently with Driver as the current club.
+- A Cheat Sheet appears only after an actual club change is detected.
+- Existing K = Club Up and I = Club Down behavior is preserved.
+- GSPro range calibration/navigation, display routing, connector minimization, GSPro shortcut/update launch behavior, and the v0.7.7 updater fixes are preserved.
+
+REAL-MACHINE TEST
+1. Close GSPro/SwingNerds.
+2. Start Coach Mode.
+3. Confirm NO Driver Cheat Sheet appears during startup.
+4. Confirm Factor Golf navigates Practice -> GS Pro Practice Range automatically.
+5. Once on the range, press I once and confirm the new club's Cheat Sheet appears.
+6. Press K once and confirm the club changes back and the configured reappear behavior is honored.

@@ -1,0 +1,8 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.3
+
+Coach Mode startup repair:
+- Fixes Start-HiddenWorker using PowerShell automatic $args, which caused Root/AppDir/other worker parameters to be lost.
+- Range Nav, Club Cheat Sheet watcher, connector minimizer, bridge, SwingNerds UIA, Coach Controls and Focus workers now receive their intended arguments.
+- Detects and repairs a saved GSProConnectRestoreFiles.exe connector path.
+- Never launches Restore/Repair/Setup/Install/Update/Uninstall/Patch executables as the Foresight/GSPro connector.
+- If GSProConnect.exe exists beside the old restore utility, Factor Golf automatically switches to it. Otherwise the bad connector path is cleared and Factor Golf waits for the normal connector process.

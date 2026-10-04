@@ -1,0 +1,11 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.4
+
+MULTI-MONITOR ROUTING + GSPRO RANGE CALIBRATION
+
+- Adds Display & Screen Routing settings for Control Center, Settings, Performance, Club Cheat Sheets, Coach feedback cards, and floating coach controls.
+- Adds one-time GSPro Range Calibration. Factor Golf records the next two real clicks inside GSPro: Practice, then GS Pro Practice Range.
+- Calibration stores click positions relative to the GSPro window, not the entire Windows desktop, so projector/touchscreen/third-monitor layouts are supported.
+- Adds a Test Range Navigation button in Settings.
+- Main Control Center, Settings, Performance, Club Cheat Sheet, Coach Card, and Coach Controls now honor their selected monitor routes.
+- Range diagnostics now record the actual GSPro window rectangle and the monitor containing it.
+- Preserves v0.8.3 connector repair and worker-argument fixes.

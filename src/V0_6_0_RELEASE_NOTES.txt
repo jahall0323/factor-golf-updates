@@ -1,0 +1,41 @@
+THE HALLISEUM CONTROL CENTER v0.6.0 — ILLUSTRATED COACH
+
+WHAT CHANGED
+
+1) COACH CARD VISUAL REDESIGN
+- Replaces the generic dashboard-style graphics with golf-specific illustrated elements.
+- Uses actual-looking golf balls, clubheads, target lines, feet/shoes, stance lines, fairway/green shapes and tracer-style visuals.
+- The primary visual adapts to the evidence available: SwingNerds body/head issue, BLP club-path data, or measured ball-flight launch.
+- Setup guidance now uses foot graphics, a real golf ball and clubhead instead of placeholder rectangles.
+- Adds a top metric strip for Carry, Ball Speed, Club Speed, Efficiency/Smash and Launch.
+- Missing BLP club data stays visibly missing; no fake face-angle or face-to-path values are created.
+
+2) COACHING PRIORITIES
+- AI may identify up to two recurring issues.
+- FIX FIRST is the clear primary priority.
+- ALSO SEEING shows the secondary issue without asking Josh to chase two swing changes at once.
+- NEXT 5 BALLS remains limited to one or two simple feels.
+
+3) GSPro PRACTICE RANGE STARTUP
+- Coach Mode still owns range navigation; GSPro Only mode does not.
+- First tries Windows UI Automation.
+- If GSPro does not expose its Unity/menu controls, Halliseum now has a normalized screen-position fallback for the current GSPro menu flow: Practice > Practice Range.
+- Range navigation status reports whether it used UI Automation or the fallback.
+
+4) FORESIGHT / GSPRO CONNECTOR MINIMIZING
+- Broader detection for Foresight Connect, Bushnell connector windows and GSPro Connect.
+- Detects an already-running connector even if the config path was blank and saves its executable path when possible.
+- Repeats minimization for 18 seconds so delayed connector windows are caught without stealing GSPro focus.
+
+IMPORTANT BLP RULES PRESERVED
+- Bushnell Launch Pro one-dot club-marker setup.
+- FaceToTarget / FaceToPath zeros from GSPro are NOT treated as measured face data.
+- Club metrics are displayed only when captured.
+- Ball data remains the dependable backbone when club data drops.
+- SwingNerds body metrics are labeled separately from BLP data.
+
+TEST FIRST
+1. Install/update and click PREVIEW PROJECTOR COACH CARD.
+2. Start Coach Mode from the GSPro home screen.
+3. Confirm the connector window minimizes and GSPro enters Practice Range.
+4. Hit 3–5 shots with one club, press the coach pedal, and check the new illustrated card.

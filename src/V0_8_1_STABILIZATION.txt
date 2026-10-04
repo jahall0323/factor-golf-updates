@@ -1,0 +1,46 @@
+FACTOR GOLF SIM CONTROL CENTER v0.8.1
+=====================================
+
+STABILIZATION BUILD
+
+This release focuses on making the existing Factor Golf workflow dependable before adding more live features.
+
+COACH MODE / GSPRO RANGE
+- Preserves the official Practice -> Practice Range route.
+- Tries Windows UI Automation first.
+- If Unity does not expose menu controls, tries Windows 10/11 built-in OCR against the GSPro window and clicks the text it actually sees.
+- Saved relative click coordinates remain only as a last-resort fallback.
+- Writes diagnostic files under:
+  G:\My Drive\Halliseum Coach Bridge\UltimateCoach
+  range_nav_status.json
+  range_nav_debug.json
+  range_nav_ocr.txt
+
+CONNECTOR MINIMIZATION
+- Enumerates all visible top-level windows instead of relying only on Process.MainWindowTitle.
+- Can minimize the exact connector PID/path that Factor Golf launched.
+- Adds VGPconnect / ForesightForm matching.
+- Writes connector_window_diagnostics.json for anything still machine-specific.
+
+CLUB CHEAT SHEET
+- Watches GSPro's default keyboard shortcuts while GSPro is foreground:
+  I = cycle from Driver toward Putter
+  K = reverse direction
+  U = Putter
+- Tries to read the selected club from the GSPro UI first.
+- If GSPro does not expose it, can infer the adjacent club from the configured Factor Golf club order so the Cheat Sheet can appear before the next shot.
+- Shot-log fallback remains for confirmation/recovery.
+
+READABILITY
+- Replaces the default Windows ComboBox rendering in Settings with a full dark template.
+- Selected/current dropdown values are gold on dark.
+- Popup backgrounds stay dark; normal text is white; selected/highlighted text is gold.
+- Performance help copy is rewritten in golfer-facing language.
+
+AI CADDY
+- Adds a visible AI CADDY / COMING SOON area to the home UI.
+- This is product architecture only. Live course strategy is not enabled in this release.
+
+COMPATIBILITY
+- User-facing product remains Factor Golf Sim Control Center.
+- Existing Halliseum internal filenames, folders, updater paths and worker names remain to protect installed systems.

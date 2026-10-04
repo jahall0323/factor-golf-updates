@@ -1,0 +1,17 @@
+HALLISEUM v0.4.2 QUICK TEST
+
+[ ] Install with 1_INSTALL_THIS_FINAL_PATCH.bat
+[ ] SET OPENAI API KEY -> PASTE FROM CLIPBOARD -> SAVE KEY SECURELY
+[ ] Coach AI tile says READY
+[ ] PREVIEW PROJECTOR COACH CARD appears on the correct display
+[ ] START COACH MODE launches/uses GSPro + SwingNerds
+[ ] Foresight/Bushnell connector stays running and minimizes
+[ ] GSPro Driving Range automation works (or status tells us what failed)
+[ ] Hit 3–5 shots with ONE club
+[ ] Press coach pedal once
+[ ] Coach Card appears
+[ ] Natural voice plays through Halliseum audio
+[ ] Microphone opens for follow-up
+[ ] Say "back to golf"
+[ ] Card closes and GSPro focus returns
+[ ] Coach pedal returns to mulligan behavior when Coach Mode is OFF

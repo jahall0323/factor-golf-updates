@@ -1,0 +1,10 @@
+Halliseum Control Center v0.7.8
+COACHING LEVELS
+
+- Added Settings > Coaching level with Rookie, Amateur, and Pro / Advanced.
+- Rookie is the default for existing installs that do not yet have a CoachingLevel value.
+- Coaching level changes explanation depth, terminology, teaching style, and consistency expectations.
+- Coaching level does NOT alter measured facts, the underlying diagnosis, or Bushnell/SwingNerds data limitations.
+- Persona remains independent from coaching level, so any persona can be paired with any teaching level.
+- Voice follow-up answers now honor the same coaching level as the initial coaching card.
+- Updated app version to 0.7.8 for the built-in Halliseum self-updater.

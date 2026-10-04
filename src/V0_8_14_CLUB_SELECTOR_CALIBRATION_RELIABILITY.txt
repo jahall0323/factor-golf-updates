@@ -1,0 +1,8 @@
+Factor Golf v0.8.14 - Club Selector Calibration Reliability
+
+- Club Selector calibration no longer fails silently.
+- Settings writes a local calibration status before launching the worker and checks for immediate worker failure.
+- Calibration status is local to the Factor Golf install first, with the Drive status retained only as a diagnostic mirror.
+- Calibration worker shows an explicit armed prompt, brings GSPro forward, waits up to 90 seconds for the selector click, then shows explicit success or failure.
+- Writes club_selector_calibration.log in the app folder for diagnostics.
+- Preserves v0.8.12 range navigation and v0.8.13 focused selector OCR design.

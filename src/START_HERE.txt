@@ -1,0 +1,17 @@
+﻿FACTOR GOLF SIM CONTROL CENTER v0.8.1
+
+Normal update path:
+- Open Factor Golf Sim Control Center.
+- Use the far-right update button.
+- When v0.8.1 is offered, click INSTALL v0.8.1 UPDATE.
+
+This release is the first Factor Golf-branded build. Internal Halliseum filenames and Drive paths remain temporarily for updater compatibility.
+
+KEY v0.8.1 CHANGES
+- Factor Golf branding in user-facing windows and coaching copy.
+- Coaching Level is relabeled Golfer Experience.
+- Preview Coach combines Golfer Experience + Persona + Voice.
+- Selected UI items keep their background and use gold text instead of a low-contrast selected fill.
+- Performance tabs/list/table selection visibility improved.
+- Top-right update button widened so version text is not clipped.
+- Hood Golf and experience-based coaching from v0.7.9 are preserved.

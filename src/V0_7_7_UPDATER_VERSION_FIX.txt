@@ -1,0 +1,14 @@
+Halliseum Control Center v0.7.7
+UPDATER VERSION FIX
+
+Root cause:
+- v0.7.6 contained the new persona files, but the Control Center still reported AppVersion 0.7.3.
+- The window title also still said v0.7.5.
+- The update checker compares latest.json to AppVersion, so it kept offering v0.7.6 after installation.
+
+Permanent fix:
+- Halliseum now reads its installed version from app_version.txt.
+- The updater writes app_version.txt after every successful update.
+- The updater validates the installed version marker before relaunching.
+- The window title is generated from the real installed version.
+- Fresh installs now report v0.7.7 correctly.

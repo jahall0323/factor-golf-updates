@@ -1,0 +1,23 @@
+HALLISEUM CONTROL CENTER v0.7.9
+HOOD GOLF + EXPERIENCE-BASED COACHING
+==============================================
+
+NEW PERSONA
+- Hood Golf added as a separate Persona.
+- Built from the useful/direct One of the Boys foundation.
+- Uses strong natural AAVE-style phrasing, cadence and slang.
+- Profanity, playful trash talk and everyday analogies are allowed when they fit.
+- Explicit guardrails prevent racial slurs, stereotypes or caricature.
+
+COACHING LEVELS UPGRADE
+Rookie now assumes the golfer is still learning fundamentals and may teach grip, stance, posture, alignment, ball position, balance, centered contact and simple ball-flight concepts when relevant.
+
+Amateur assumes those basics are already understood and focuses more on repeatability, strike, start line, curvature, dispersion, distance control and cause/effect.
+
+Pro / Advanced assumes strong fundamentals and golf knowledge. It normally skips beginner setup lessons unless evidence identifies a fundamental breakdown, and focuses on precise delivery, pattern quality, launch/spin relationships, sequencing, dispersion and optimization.
+
+IMPORTANT
+Coaching Level changes the assumed experience, teaching depth and expectations. It never changes measured facts or launch-monitor/data limitations.
+
+UPDATER
+Preserves the updater-managed app_version.txt behavior introduced in v0.7.7.

@@ -1,0 +1,9 @@
+Halliseum Control Center v0.7.3
+
+- Voice selector simplified to Female (Marin internally) and Male (Cedar internally).
+- Removed Onyx, Ash, Echo and Verse from the Halliseum Settings selector.
+- Persona choices now display PG, PG-13 and R labels with plain-English descriptions.
+- Added a player-name setting. Leave it blank to prevent the coach from using a name or nickname.
+- Removed hard-coded Big Daddy and Josh addressing from voice tests and AI coaching prompts.
+- Player name and persona now flow into both the coaching model and follow-up conversation behavior.
+- Coaching rigor and BLP data rules stay the same regardless of persona.
