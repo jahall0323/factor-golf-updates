@@ -15,3 +15,15 @@ jobs:
       - name: Windows PowerShell 5.1 syntax
         shell: powershell
         run: ./tools/check_powershell.ps1
+  install-update:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Isolated install and update contracts
+        shell: powershell
+        run: ./tests/test_install_update.ps1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: install-update-results
+          path: install-update-results.json
