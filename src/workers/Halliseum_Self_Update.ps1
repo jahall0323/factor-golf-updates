@@ -99,6 +99,8 @@ try {
     Log "Rollback snapshot created: $backup"
 
     $preserve = @('config.json','secrets','update.log')
+    # Normalize short (8.3) and expanded paths before computing relative names.
+    $payload=(Get-Item -LiteralPath $payload).FullName
     # Journal only package-owned paths before each mutation. Preserve unrelated user data.
     foreach ($item in Get-ChildItem -LiteralPath $payload -Force -Recurse | Sort-Object FullName) {
         $relative=$item.FullName.Substring($payload.Length).TrimStart('\')
