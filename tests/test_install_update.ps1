@@ -123,7 +123,7 @@ try {
    }
    foreach ($name in $preserved.Keys) { Assert-True ((Get-FileHash (Join-Path $app $name)).Hash -eq $preserved[$name]) ('User data changed: ' + $name) }
    $results += [pscustomobject]@{name=$case;passed=$true;detail='PASS'}
-  } catch { $results += [pscustomobject]@{name=$case;passed=$false;detail=$_.Exception.Message} }
+  } catch { $detail=$_.Exception.Message; if(Test-Path (Join-Path $app 'update.log')){ $detail += "`n" + (Get-Content (Join-Path $app 'update.log') -Raw) }; $results += [pscustomobject]@{name=$case;passed=$false;detail=$detail} }
  }
 } finally {
  $env:TEMP=$originalTemp; $env:LOCALAPPDATA=$originalLocal
