@@ -31,6 +31,14 @@ $downloaded=$false
 $tempPackage=''
 $stage=''
 $backup=''
+$snapshotReady=$false
+$journal=New-Object 'System.Collections.Generic.List[object]'
+function Record-UpdatePath([string]$relative,[bool]$directory=$false){
+    $target=Join-Path $AppDir $relative
+    if(-not($journal | Where-Object {$_.relative -eq $relative})){
+        $journal.Add([pscustomobject]@{relative=$relative;existed=(Test-Path -LiteralPath $target);directory=$directory})
+    }
+}
 try {
     if(-not$PackagePath -and -not$PackageUrl){throw 'No update package path or URL was supplied.'}
     if($PackagePath -and $PackageUrl){throw 'Updater received both PackagePath and PackageUrl. Only one source is allowed.'}
@@ -80,25 +88,29 @@ try {
     # Make one local rollback snapshot of app-owned files before changing anything.
     $backupRoot=Join-Path $env:LOCALAPPDATA 'FactorGolfUpdater\Backups';New-Item -ItemType Directory -Path $backupRoot -Force|Out-Null
     $currentVersion='unknown';try{$currentVersion=(Get-Content -LiteralPath (Join-Path $AppDir 'app_version.txt') -Raw).Trim()}catch{}
-    $backup=Join-Path $backupRoot ("v"+$currentVersion+'_'+(Get-Date -Format 'yyyyMMdd_HHmmss'))
+    $backup=Join-Path $backupRoot ("v"+$currentVersion+'_'+(Get-Date -Format 'yyyyMMdd_HHmmss')+'_'+[guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $backup -Force|Out-Null
     foreach($item in Get-ChildItem -LiteralPath $AppDir -Force){
         if($item.Name -in @('config.json','secrets','update.log')){continue}
         Copy-Item -LiteralPath $item.FullName -Destination $backup -Recurse -Force
     }
     Get-ChildItem -LiteralPath $backupRoot -Directory|Sort-Object LastWriteTime -Descending|Select-Object -Skip 2|Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    $snapshotReady=$true
     Log "Rollback snapshot created: $backup"
 
     $preserve = @('config.json','secrets','update.log')
-    foreach ($item in Get-ChildItem -LiteralPath $payload -Force) {
-        if ($preserve -contains $item.Name) { continue }
-        $dest = Join-Path $AppDir $item.Name
-        if ($item.PSIsContainer) {
-            New-Item -ItemType Directory -Path $dest -Force | Out-Null
-            foreach ($child in @(Get-ChildItem -LiteralPath $item.FullName -Force)) { Copy-Item -LiteralPath $child.FullName -Destination $dest -Recurse -Force }
-        } else { Copy-Item -LiteralPath $item.FullName -Destination $dest -Force }
+    # Journal only package-owned paths before each mutation. Preserve unrelated user data.
+    foreach ($item in Get-ChildItem -LiteralPath $payload -Force -Recurse | Sort-Object FullName) {
+        $relative=$item.FullName.Substring($payload.Length).TrimStart('\')
+        $top=($relative -split '[\\/]')[0]
+        if ($preserve -contains $top) { continue }
+        $dest=Join-Path $AppDir $relative
+        Record-UpdatePath $relative $item.PSIsContainer
+        if($item.PSIsContainer){New-Item -ItemType Directory -Path $dest -Force|Out-Null}
+        else{Copy-Item -LiteralPath $item.FullName -Destination $dest -Force}
     }
-
+    Record-UpdatePath 'app_version.txt'
+    Record-UpdatePath 'last_update.json'
     Set-Content -LiteralPath (Join-Path $AppDir 'app_version.txt') -Value $Version -Encoding ASCII
     [ordered]@{
         version = $Version
@@ -124,12 +136,19 @@ try {
 } catch {
     Log ("UPDATE FAILED: " + $_.Exception.Message)
     # Roll back if an install failure happened after the snapshot was created.
-    if($backup -and (Test-Path -LiteralPath $backup)){
+    if($snapshotReady -and $backup -and (Test-Path -LiteralPath $backup)){
         try{
             Log "Attempting rollback from $backup"
-            foreach($item in Get-ChildItem -LiteralPath $backup -Force){
-                $dest=Join-Path $AppDir $item.Name
-                Copy-Item -LiteralPath $item.FullName -Destination $dest -Recurse -Force
+            # Deepest paths first. Restore exact file paths, never nest backup directories.
+            foreach($entry in @($journal | Sort-Object @{Expression={$_.relative.Length};Descending=$true})){
+                $dest=Join-Path $AppDir $entry.relative
+                if($entry.directory){
+                    if(-not$entry.existed -and (Test-Path -LiteralPath $dest) -and @(Get-ChildItem -LiteralPath $dest -Force).Count -eq 0){
+                        Remove-Item -LiteralPath $dest -Force
+                    }
+                }elseif($entry.existed){
+                    Copy-Item -LiteralPath (Join-Path $backup $entry.relative) -Destination $dest -Force
+                }elseif(Test-Path -LiteralPath $dest){Remove-Item -LiteralPath $dest -Force}
             }
             Log 'Rollback completed.'
         }catch{Log ("ROLLBACK FAILED: "+$_.Exception.Message)}

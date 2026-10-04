@@ -18,9 +18,21 @@ def digest(data):
 def audit(root=ROOT):
     errors = []
     hashes = json.loads((root / 'docs/migration/09_FILE_HASHES.json').read_text())
+    candidate_path = root / 'docs/CANDIDATE_CHANGES.json'
+    candidate = json.loads(candidate_path.read_text()) if candidate_path.exists() else {}
+    with zipfile.ZipFile(root / 'evidence/Factor_Golf_Sim_Control_Center_v0_8_14_ACCEPTED_BASELINE.zip') as z:
+        baseline = {n: z.read(n) for n in z.namelist() if not n.endswith('/')}
     for old, expected in hashes.items():
         if old.startswith('source_baseline_v0.8.14/'):
-            path = root / 'src' / old.split('/', 1)[1]
+            relative = old.split('/', 1)[1]
+            path = root / 'src' / relative
+            if digest(baseline[relative]) != expected:
+                errors.append(f'Immutable baseline archive mismatch: {relative}')
+            if relative in candidate:
+                entry = candidate[relative]
+                if entry.get('baseline_sha256') != expected or not entry.get('reason'):
+                    errors.append(f'Invalid candidate provenance: {relative}')
+                expected = entry['candidate_sha256']
         elif old.startswith('rejected_v0.8.15_diff/') or old.endswith('.zip'):
             path = root / 'evidence' / old
         else:
@@ -74,8 +86,13 @@ def audit(root=ROOT):
             if accepted.get(path) != rejected.get(path):
                 errors.append(f'Critical worker changed in rejected package: {path}')
         actual_files = {p.relative_to(src).as_posix() for p in src.rglob('*') if p.is_file()}
-        if actual_files != set(accepted):
+        if actual_files != set(accepted) | set(candidate):
             errors.append('Source inventory differs from accepted package')
+    for relative, entry in candidate.items():
+        if relative not in baseline:
+            path = src / relative
+            if entry.get('baseline_sha256') is not None or not path.is_file() or digest(path.read_bytes()) != entry['candidate_sha256'] or not entry.get('reason'):
+                errors.append(f'Invalid added candidate file: {relative}')
     return errors, blocks
 
 if __name__ == '__main__':
@@ -86,6 +103,6 @@ if __name__ == '__main__':
     print(f'Parsed {blocks} embedded XAML XML blocks')
     for error in errors:
         print('FAIL:', error)
-    print('FAIL' if errors else 'PASS: exact baseline, evidence, versions, workers, ZIPs and XAML XML')
+    print('FAIL' if errors else 'PASS: immutable baseline, declared candidate hashes, evidence, versions, workers, ZIPs and XAML XML')
     print('NOT RUN HERE: Windows PowerShell parser, WPF runtime, install/upgrade, GSPro, hardware, voice, cloud feed')
     raise SystemExit(bool(errors))

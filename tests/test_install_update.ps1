@@ -79,6 +79,11 @@ try {
     New-Item -ItemType Directory (Join-Path $payload 'secrets') | Out-Null
     Set-Content (Join-Path $payload 'secrets\key.bin') 'overwrite attempt'
     if ($case -eq 'rollback') {
+     New-Item -ItemType Directory (Join-Path $app 'workers'),(Join-Path $payload 'workers'),(Join-Path $payload 'new_directory') | Out-Null
+     Set-Content (Join-Path $app 'workers\existing.ps1') '# old nested worker'
+     Set-Content (Join-Path $payload 'workers\existing.ps1') '# replacement nested worker'
+     Set-Content (Join-Path $payload 'workers\introduced.ps1') '# introduced nested worker'
+     Set-Content (Join-Path $payload 'new_directory\introduced.txt') 'new directory content'
      Set-Content (Join-Path $payload 'aa_new_file.txt') 'must disappear on rollback'
      Set-Content (Join-Path $payload 'zz_fail.txt') 'injection target'
     }
@@ -108,6 +113,10 @@ try {
      if ($case -eq 'rollback') {
       Assert-True ($log -match 'Injected copy failure' -and $log -match 'Rollback completed') 'Failure injection or rollback did not execute'
       Assert-True (-not (Test-Path (Join-Path $app 'aa_new_file.txt'))) 'ROLLBACK DEFECT: newly introduced file remains after rollback'
+      Assert-True ((Read-Text (Join-Path $app 'workers\existing.ps1')) -eq '# old nested worker') 'Nested worker not restored'
+      Assert-True (-not (Test-Path (Join-Path $app 'workers\introduced.ps1'))) 'Introduced nested worker remains'
+      Assert-True (-not (Test-Path (Join-Path $app 'new_directory'))) 'New directory remains'
+      Assert-True (-not (Test-Path (Join-Path $app 'workers\workers'))) 'Rollback nested the workers directory'
      }
     }
     Assert-True (@(Get-ChildItem $env:TEMP -Directory -Filter 'FactorGolfStage_*').Count -eq 0) 'Staging directory leaked'

@@ -1,0 +1,7 @@
+{
+  "workers/Halliseum_Self_Update.ps1": {
+    "baseline_sha256": "1463cb67bf021fb7aeb646fc28b21242eee5c483b09d2a7b1061b4789cbb6519",
+    "candidate_sha256": "20960bba7280258c5dc9df451402c2bcaa8f882c77f36109a8b6f6e9d1e86836",
+    "reason": "Journal package-owned mutations and remove introduced paths on failed installation; restore exact file paths."
+  }
+}
