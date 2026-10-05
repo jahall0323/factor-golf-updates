@@ -9,3 +9,9 @@ Tests execute the production recognition loop using a scripted recognizer, inclu
 This repairs control flow and observability, not the acoustic accuracy of Windows dictation. Live microphone routing, background noise, recognition accuracy and hands-free GSPro return still require Halliseum validation before release. No version bump or release publication.
 
 API reference: https://learn.microsoft.com/en-us/dotnet/api/system.speech.recognition.grammarbuilder?view=netframework-4.8.1
+
+## Windows result
+
+Commit b88c3526c92b10abbf7337f9a9db5c6439b2c6d4 passed the voice-recognition contract job, all 11 install/update cases and the static job (integrity, six mutation tests, PS5.1 parsing) in run 37246590736. The terminal-diagnostic test also verifies that the final rejected phrase and confidence remain available after retries are exhausted. This is synthetic recognition/control-flow coverage and real grammar construction, not microphone accuracy acceptance.
+
+Evidence: https://github.com/jahall0323/factor-golf-updates/actions/runs/37246590736
