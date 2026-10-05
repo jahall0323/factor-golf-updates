@@ -3,5 +3,20 @@
     "baseline_sha256": "1463cb67bf021fb7aeb646fc28b21242eee5c483b09d2a7b1061b4789cbb6519",
     "candidate_sha256": "1fb600acdbcdc1c96001138aeddd7eeb3f8075d130546a1966e5c46941dda17f",
     "reason": "Journal package-owned mutations and remove introduced paths on failed installation; restore exact file paths."
+  },
+  "workers/Halliseum_Settings.ps1": {
+    "baseline_sha256": "759f7a4b5232151e472fe8fd263e5e652af60acff19011d9b7efc5838aade776",
+    "candidate_sha256": "b3e9162698e697fb3c89d2c4eb2f23cdc14502cc666fac125bc3c6f0b1553eef",
+    "reason": "Correlate isolated club-test feedback; surface timeout/exit; reject unverified whole-screen and ambiguous club guesses."
+  },
+  "workers/Halliseum_Club_Cheat_Watcher.ps1": {
+    "baseline_sha256": "46c0c896e30f690ed14ed8e08d7c3181e2af22f1eb4bd0d526899ddf28f36c8f",
+    "candidate_sha256": "ac71546765a3559fd7b8da66abd3e6d7fe18f82fca2bd730e6114ab50c878bf2",
+    "reason": "Correlate isolated club-test feedback; surface timeout/exit; reject unverified whole-screen and ambiguous club guesses."
+  },
+  "workers/Halliseum_Club_Test_Status.ps1": {
+    "baseline_sha256": null,
+    "candidate_sha256": "cb4e219ace039e28dd698ceecc475b98909b6ee05f5de39d82045d4593345e70",
+    "reason": "Correlate isolated club-test feedback; surface timeout/exit; reject unverified whole-screen and ambiguous club guesses."
   }
 }

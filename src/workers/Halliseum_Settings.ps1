@@ -4,6 +4,7 @@ Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName PresentationCore
 Add-Type -AssemblyName System.Windows.Forms
 . (Join-Path $PSScriptRoot 'FactorGolf_Display_Helper.ps1')
+. (Join-Path $PSScriptRoot 'Halliseum_Club_Test_Status.ps1')
 $configPath=Join-Path $AppDir 'config.json';$defaultPath=Join-Path $AppDir 'config.default.json'
 $config=if(Test-Path $configPath){Get-Content $configPath -Raw|ConvertFrom-Json}else{Get-Content $defaultPath -Raw|ConvertFrom-Json}
 function Ensure([string]$name,$value){if(-not($config.PSObject.Properties.Name -contains $name)){$config|Add-Member -NotePropertyName $name -NotePropertyValue $value}}
@@ -346,7 +347,24 @@ function Update-RangeCalibrationStatus{
  if([bool]$config.RangeNavCalibrated){$RangeCalibrationStatus.Text='Calibrated. Coach Mode will use your saved GSPro-relative Practice and Practice Range positions.'}else{$RangeCalibrationStatus.Text='Not calibrated yet. Calibration is recommended for multi-monitor setups.'}
 }
 Update-RangeCalibrationStatus
+$script:clubTestRequest=$null
+$script:clubTestMessage=''
 function Update-ClubSelectorCalibrationStatus{
+ if($script:clubTestRequest){
+  $ds=$null
+  try{if(Test-Path $script:clubTestRequest.path){$ds=Get-Content $script:clubTestRequest.path -Raw -ErrorAction Stop|ConvertFrom-Json -ErrorAction Stop}}catch{}
+  $elapsed=((Get-Date)-$script:clubTestRequest.started).TotalSeconds
+  $exited=$script:clubTestRequest.process.HasExited
+  $view=Get-FGClubTestView $script:clubTestRequest.id $ds $elapsed $exited
+  $script:clubTestMessage=$view.message
+  if($view.complete){
+   if(-not$exited){try{$script:clubTestRequest.process.Kill()}catch{}}
+   Remove-Item $script:clubTestRequest.path -Force -ErrorAction SilentlyContinue
+   $script:clubTestRequest=$null
+   $TestClubDetectionButton.IsEnabled=$true
+  }
+ }
+ if($script:clubTestMessage){$ClubSelectorCalibrationStatus.Text=$script:clubTestMessage;return}
  try{if(Test-Path $clubCalStatusPath){$cs=Get-Content $clubCalStatusPath -Raw|ConvertFrom-Json;$ClubSelectorCalibrationStatus.Text=[string]$cs.message;return}}catch{}
  try{if(Test-Path $legacyClubCalStatusPath){$cs=Get-Content $legacyClubCalStatusPath -Raw|ConvertFrom-Json;$ClubSelectorCalibrationStatus.Text=[string]$cs.message;return}}catch{}
  try{if(Test-Path $clubDetectStatusPath){$ds=Get-Content $clubDetectStatusPath -Raw|ConvertFrom-Json;if([string]$ds.state -like 'club_detection_test*'){$ClubSelectorCalibrationStatus.Text=[string]$ds.message;return}}}catch{}
@@ -367,6 +385,8 @@ $TestRangeButton.Add_Click({
  $script=Join-Path $AppDir 'workers\Halliseum_Range_Nav.ps1';Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`" -Root `"$stateRoot`" -AppDir `"$AppDir`"" -WindowStyle Hidden|Out-Null
 })
 $CalibrateClubSelectorButton.Add_Click({
+ if($script:clubTestRequest){return}
+ $script:clubTestMessage=''
  $gp=Get-Process -Name 'GSPro' -ErrorAction SilentlyContinue|Where-Object{$_.MainWindowHandle -ne 0}|Select-Object -First 1
  if(-not$gp){[System.Windows.MessageBox]::Show('Open GSPro to the PRACTICE RANGE first, with the club selector visible.','Factor Golf Club Selector Calibration',[System.Windows.MessageBoxButton]::OK,[System.Windows.MessageBoxImage]::Information)|Out-Null;return}
  Remove-Item $clubCalStatusPath -Force -ErrorAction SilentlyContinue
@@ -388,10 +408,26 @@ $CalibrateClubSelectorButton.Add_Click({
 })
 $TestClubDetectionButton.Add_Click({
  $gp=Get-Process -Name 'GSPro' -ErrorAction SilentlyContinue|Where-Object{$_.MainWindowHandle -ne 0}|Select-Object -First 1;if(-not$gp){[System.Windows.MessageBox]::Show('Open GSPro on the Practice Range with the club selector visible before testing club detection.','Factor Golf')|Out-Null;return}
- Remove-Item $clubDetectStatusPath -Force -ErrorAction SilentlyContinue
- $script=Join-Path $AppDir 'workers\Halliseum_Club_Cheat_Watcher.ps1';Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`" -Root `"$stateRoot`" -AppDir `"$AppDir`" -TestOnce" -WindowStyle Hidden|Out-Null
+ if($script:clubTestRequest){return}
+ $id=[guid]::NewGuid().ToString('N')
+ $testPath=Join-Path $AppDir ("club_detection_test_$id.json")
+ try{
+  $worker=Join-Path $AppDir 'workers\Halliseum_Club_Cheat_Watcher.ps1'
+  if(-not(Test-Path $worker)){throw 'Club detection worker is missing.'}
+  $proc=Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$worker`" -Root `"$stateRoot`" -AppDir `"$AppDir`" -TestOnce -TestRequestId $id" -WindowStyle Hidden -PassThru -ErrorAction Stop
+  $script:clubTestRequest=[pscustomobject]@{id=$id;path=$testPath;started=(Get-Date);process=$proc}
+  $script:clubTestMessage='Reading the GSPro club selector...'
+  $TestClubDetectionButton.IsEnabled=$false
+ }catch{$script:clubTestMessage='Club detection could not start: '+$_.Exception.Message}
+ Update-ClubSelectorCalibrationStatus
 })
-$w.Add_Closed({try{$calTimer.Stop()}catch{}})
+$w.Add_Closed({
+ try{$calTimer.Stop()}catch{}
+ if($script:clubTestRequest){
+  try{if(-not$script:clubTestRequest.process.HasExited){$script:clubTestRequest.process.Kill();$script:clubTestRequest.process.WaitForExit(1000)|Out-Null}}catch{}
+  Remove-Item $script:clubTestRequest.path -Force -ErrorAction SilentlyContinue
+ }
+})
 $CancelButton.Add_Click({$w.Close()})
 $SaveButton.Add_Click({
  Save-ScreenChoice $ControlCenterScreen 'ControlCenterDisplayKey' 'ControlCenterScreenIndex';Save-ScreenChoice $SettingsScreen 'SettingsDisplayKey' 'SettingsScreenIndex';Save-ScreenChoice $PerformanceScreen 'PerformanceDisplayKey' 'PerformanceScreenIndex';Save-ScreenChoice $GSProScreen 'GSProDisplayKey' 'GSProScreenIndex' $true;Save-ScreenChoice $CheatSheetScreen 'ClubCheatSheetDisplayKey' 'ClubCheatSheetScreenIndex';Save-ScreenChoice $CoachCardScreen 'CoachCardDisplayKey' 'CoachCardScreenIndex';$config.PlayerName=$PlayerNameBox.Text.Trim();$config.TTSVoice=[string]$VoiceCombo.SelectedItem.Tag;$config.CoachPersona=[string]$PersonaCombo.SelectedItem.Tag;$config.CoachingLevel=[string]$CoachingLevelCombo.SelectedItem.Tag;$config.VoiceSilenceSeconds=[int]$SilenceCombo.SelectedItem.Tag;$config.ClubCheatSheetEnabled=[bool]$CheatEnabled.IsChecked;$config.ClubCheatSheetShowMode=[string]$CheatMode.SelectedItem.Tag;$config.ClubCheatSheetDisplaySeconds=[int]$CheatSeconds.SelectedItem.Tag;$config.AutoOpenDrivingRange=[bool]$AutoRange.IsChecked;$config.CoachCardWindowedOverlay=[bool]$WindowedCoach.IsChecked;$config.MinimizeForesightConnector=[bool]$MinConnector.IsChecked;$config.StartWithWindows=[bool]$StartWindows.IsChecked;$config.GSPro=$GSProPath.Text.Trim();$config.SwingNerds=$SNPath.Text.Trim();$config.ForesightConnector=$ConnectorPath.Text.Trim();$config.FSXPlay=$FSXPlayPath.Text.Trim();$config.FSXPro=$FSXProPath.Text.Trim();$config.FSXPremier=$FSXPremierPath.Text.Trim();$config.Fairgrounds=$FairgroundsPath.Text.Trim();$config.BagMappingHalfLifeDays=[int]$HalfLifeCombo.SelectedItem.Tag
