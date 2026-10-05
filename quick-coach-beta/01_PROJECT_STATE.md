@@ -25,7 +25,7 @@ Quick Coach is separate from Factor Golf Sim Control Center. Do not modify the m
 - Inferences must be labeled likely/possible/suggested.
 
 ## Current candidate
-**v0.1.3 - OPEN / not Halliseum accepted**
+**v0.1.4 - OPEN / current Halliseum candidate**
 
 ### Why v0.1.3 replaced v0.1.2 before Halliseum testing
 Source inspection found a malformed v0.1.2 startup/config migration block. That candidate should not be tested or promoted.
@@ -73,3 +73,40 @@ Corrected DPAPI namespace, but later source inspection found a separate malforme
 6. Confirm one press causes one response and spoken feedback.
 7. After those pass, finish/publish the accepted one-click updater feed.
 8. Only then add Realtime Mini two-way voice.
+
+
+## 2026-10-05 Halliseum evidence from v0.1.3
+Confirmed:
+- API key secure save/read-back works.
+- Quick Coach captured GSPro at 1920x1080.
+- OpenAI request completed and returned coaching text.
+- The captured image was a valid GSPro projector image.
+
+Failure:
+- Quick Coach main UI disappeared.
+- Windows TTS began and was cut off almost immediately.
+
+Root cause found in v0.1.3 source:
+- coaching flow hid the modal main WPF window;
+- F18 path never restored it;
+- process/dialog lifetime could therefore end while asynchronous speech was still running.
+
+## v0.1.4 current changes
+- no main-window Hide() in coaching path;
+- temporary opacity only during screen copy;
+- config enumeration fix;
+- readable checkbox text;
+- clearer shot-note label;
+- persistent Quick Coach window position;
+- TTS completion/cancel/error logging;
+- GSPro capture rectangle logging;
+- EXPORT DIAGNOSTICS button that excludes the protected API-key file.
+
+## Next Halliseum test
+1. Install v0.1.4.
+2. Keep GSPro full-screen on projector.
+3. Keep Quick Coach on Sceptre.
+4. Hit one shot and wait for result data.
+5. Tap F18 once.
+6. Confirm UI stays alive, response returns, full speech completes, popup behavior is normal.
+7. If any failure occurs, use EXPORT DIAGNOSTICS and upload the ZIP.
