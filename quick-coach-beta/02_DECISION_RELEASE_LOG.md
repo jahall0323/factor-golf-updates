@@ -54,3 +54,45 @@ Halliseum validation: OPEN.
 
 Release acceptance rule:
 Never call a Quick Coach build accepted because it packages or passes static checks. Hardware/Windows/GSPro/OpenAI-dependent behavior remains OPEN until actually proven on the Halliseum.
+
+
+## Halliseum finding: v0.1.3
+Real-machine evidence on 2026-10-05:
+- API key save/read-back verification: PASS.
+- GSPro capture: PASS at 1920x1080.
+- OpenAI Responses API request: PASS.
+- Model response returned successfully.
+- Main Quick Coach UI disappeared during/after the coaching cycle.
+- Windows TTS started but speech was cut off almost immediately.
+
+Source diagnosis:
+- v0.1.3 called the main WPF window Hide() before capture.
+- The pedal path did not restore that main window.
+- The main window is hosted with ShowDialog(), so hiding the modal window can end the dialog lifetime and allow process teardown, which can also truncate asynchronous TTS.
+- This lifecycle defect is the primary fix target. TTS truncation will remain instrumented until Halliseum proves the fix.
+
+Status: v0.1.3 REJECTED FOR FORWARD TESTING.
+
+## v0.1.4
+Current candidate.
+
+Changes:
+- Removes main-window Hide() from the coaching cycle.
+- Uses temporary opacity only during the actual screen copy, then restores immediately.
+- Keeps the main WPF lifetime intact during F18 coaching.
+- Fixes config-load enumeration warning.
+- Logs GSPro window coordinates.
+- Adds TTS start/completion/cancel/error diagnostics.
+- Fixes unreadable dark-theme checkbox labels.
+- Renames shot context field for clarity.
+- Persists Quick Coach window position.
+- Adds EXPORT DIAGNOSTICS; API-key secret is explicitly excluded.
+
+Off-machine gates passed:
+- config JSON parse
+- embedded XAML parse
+- targeted lifecycle regression assertions
+- diagnostics secret-exclusion allowlist check
+- ZIP integrity
+
+Halliseum validation: OPEN.
