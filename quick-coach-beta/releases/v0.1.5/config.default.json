@@ -1,0 +1,17 @@
+{
+  "Version": "0.1.5",
+  "GolferExperience": "Rookie",
+  "Persona": "Golf Buddy",
+  "SpeakFeedback": true,
+  "ShowPopup": true,
+  "PopupSeconds": 10,
+  "Voice": "",
+  "TriggerKey": "F18",
+  "Model": "gpt-6-luna",
+  "RealtimeVoiceModel": "gpt-realtime-2.1-mini",
+  "ResponseWordLimit": 70,
+  "ImageDetail": "high",
+  "ArmedOnStartup": true,
+  "WindowLeft": null,
+  "WindowTop": null
+}
