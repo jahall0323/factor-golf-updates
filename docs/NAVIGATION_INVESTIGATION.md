@@ -13,3 +13,15 @@ At 12:42:47, final status is calibration_needed with the generic automatic-navig
 The worker ran, reached diagnostics and exhausted navigation methods. Saved duplicate coordinates and coordinate-space handling warrant investigation. Identical coordinates alone are not proof of invalid calibration; different screens can place tiles at the same location. The logs do not record app version, effective source hashes, click-by-click status history or foreground-window history, so their association with the rejected build is contextual, not proven from the files themselves.
 
 v0.8.14 and v0.8.15 have identical navigation/main-launcher code and only the default Version value changed. The root cause remains unproven. Inspect calibration capture/debounce, preserved live config, window/DPI handling and worker focus interactions before attempting a fix. Preserve the baseline and do not ask for speculative rebuild testing.
+
+## Follow-up evidence and narrowed hypotheses
+
+The calibration result timestamped 04:37:39 local time already contains the identical Practice/Range positions (0.3265625, 0.73425925925925928). This predates the failing run, so duplicated coordinates cannot be attributed to a new overwrite by v0.8.15. The calibration worker waits for button release between captures; source review does not support a simple held-click duplication explanation.
+
+A later read of range_nav_status.json reports disabled at 17:33:48 because GSPro Only mode intentionally disables automation. This is a separate, later run and must not replace or reinterpret the earlier calibration_needed result. Mutable latest-status files are not a historical trace.
+
+The saved club-selector crop contains scenery/trees with no selector text. Its debug file has empty OCR text and no candidates. This establishes a capture/input problem for that attempt, not an OCR confidence problem. It does not by itself distinguish wrong calibration, window state, focus, or DPI coordinates.
+
+No DPI-awareness initialization is present in the accepted source. Window-relative geometry plus screen capture warrants a controlled physical-coordinate comparison; mixed-DPI behavior is a hypothesis, not a proven root cause. The available evidence has no per-click screenshots, foreground history or source/version correlation to resolve it. Navigation source remains unchanged.
+
+Next diagnostic acceptance gate: on one controlled Halliseum run, correlate source/version and run ID with pre/post-click foreground handle, reported and physical window bounds, DPI context, and captures. Compare the existing calibration against those frames before changing navigation coordinates or timing. No speculative navigation patch or recalibration is required from the user at this stage.

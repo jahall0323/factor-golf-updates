@@ -17,3 +17,7 @@ Failed contract: rollback. The test installed aa_new_file.txt, injected a copy e
 Passing scenarios: fresh updater target, upgrade, nested package, incorrect hash, missing hash, version mismatch, missing main script, conflicting sources, non-HTTPS source rejection, and installer payload copying. Preservation assertions passed in these scenarios. Rollback preservation assertions after the failed removal assertion were not reached, so full rollback data preservation is not claimed.
 
 Evidence: https://github.com/jahall0323/factor-golf-updates/actions/runs/37233396610
+
+## Fixed candidate results
+
+On fix/transactional-rollback, commit 71f507fbfff7d30753c3bfd07c3b5105ff9e1d31 passes all 11 cases. The baseline failing assertion is preserved, and added nested rollback checks pass. The suite executes the candidate updater on this branch; historical baseline results above remain unchanged. See ROLLBACK_FIX.md for scope and evidence.
