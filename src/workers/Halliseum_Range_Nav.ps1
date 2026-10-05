@@ -24,7 +24,13 @@ $statusDir=Join-Path $Root "UltimateCoach";New-Item -ItemType Directory -Path $s
 $statusPath=Join-Path $statusDir "range_nav_status.json"
 $debugPath=Join-Path $statusDir "range_nav_debug.json"
 $ocrDumpPath=Join-Path $statusDir "range_nav_ocr.txt"
+# FGDIAG-BEGIN
+try{. (Join-Path $PSScriptRoot 'FactorGolf_Nav_Trace.ps1');Start-FGNavTrace $AppDir $Root}catch{}
+# FGDIAG-END
 function Save([string]$state,[string]$msg,[string]$method=''){
+    # FGDIAG-BEGIN
+    try{Send-FGNavTrace 'status' @{state=$state;message=$msg;method=$method}}catch{}
+    # FGDIAG-END
     [ordered]@{state=$state;message=$msg;method=$method;updated=(Get-Date).ToString("o")} | ConvertTo-Json -Depth 4 | Set-Content $statusPath -Encoding UTF8
 }
 function Save-Debug($obj){try{$obj|ConvertTo-Json -Depth 8|Set-Content $debugPath -Encoding UTF8}catch{}}
@@ -38,7 +44,14 @@ function Get-WindowRectObject($proc){
     try{$r=New-Object FactorGolfRangeNative+RECT;if([FactorGolfRangeNative]::GetWindowRect($proc.MainWindowHandle,[ref]$r)){$w=$r.Right-$r.Left;$h=$r.Bottom-$r.Top;if($w-ge400 -and $h-ge300){return [pscustomobject]@{Left=$r.Left;Top=$r.Top;Right=$r.Right;Bottom=$r.Bottom;Width=$w;Height=$h}}}}catch{};return $null
 }
 function Click-ScreenPoint([int]$x,[int]$y){
-    try{[FactorGolfRangeNative]::SetCursorPos($x,$y)|Out-Null;Start-Sleep -Milliseconds 110;[FactorGolfRangeNative]::mouse_event(0x0002,0,0,0,[UIntPtr]::Zero);Start-Sleep -Milliseconds 55;[FactorGolfRangeNative]::mouse_event(0x0004,0,0,0,[UIntPtr]::Zero);return $true}catch{return $false}
+    # FGDIAG-BEGIN
+    try{Send-FGNavTrace 'click_requested' @{x=$x;y=$y}}catch{}
+    # FGDIAG-END
+    try{[FactorGolfRangeNative]::SetCursorPos($x,$y)|Out-Null;Start-Sleep -Milliseconds 110;[FactorGolfRangeNative]::mouse_event(0x0002,0,0,0,[UIntPtr]::Zero);Start-Sleep -Milliseconds 55;[FactorGolfRangeNative]::mouse_event(0x0004,0,0,0,[UIntPtr]::Zero);
+    # FGDIAG-BEGIN
+    try{Send-FGNavTrace 'click_released' @{x=$x;y=$y}}catch{}
+    # FGDIAG-END
+    return $true}catch{return $false}
 }
 function Click-Relative($proc,[double]$rx,[double]$ry){
     $r=Get-WindowRectObject $proc;if(-not$r){return $false};$x=[int]($r.Left+($r.Width*$rx));$y=[int]($r.Top+($r.Height*$ry));return (Click-ScreenPoint $x $y)
@@ -117,7 +130,15 @@ function Dump-Uia($proc){
     $rows=@();try{$root=[System.Windows.Automation.AutomationElement]::FromHandle($proc.MainWindowHandle);$els=$root.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition);for($i=0;$i-lt$els.Count;$i++){try{$el=$els.Item($i);$r=$el.Current.BoundingRectangle;$rows += [pscustomobject]@{name=[string]$el.Current.Name;automation_id=[string]$el.Current.AutomationId;control_type=[string]$el.Current.ControlType.ProgrammaticName;left=$r.Left;top=$r.Top;width=$r.Width;height=$r.Height}}catch{}}}catch{};return $rows
 }
 function Invoke-MatchingControl($root,[string[]]$patterns){
-    try{$els=$root.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition);foreach($pat in $patterns){for($i=0;$i-lt$els.Count;$i++){try{$el=$els.Item($i);$n=[string]$el.Current.Name;if($n -and $n -match $pat){$p=$null;if($el.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$p)){$p.Invoke();return $n};if($el.TryGetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern,[ref]$p)){$p.Select();return $n}}}catch{}}}}catch{};return $null
+    try{$els=$root.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition);foreach($pat in $patterns){for($i=0;$i-lt$els.Count;$i++){try{$el=$els.Item($i);$n=[string]$el.Current.Name;if($n -and $n -match $pat){$p=$null;if($el.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$p)){
+    # FGDIAG-BEGIN
+    try{Send-FGNavTrace 'uia_action' @{name=$n;action='Invoke'}}catch{}
+    # FGDIAG-END
+    $p.Invoke();return $n};if($el.TryGetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern,[ref]$p)){
+    # FGDIAG-BEGIN
+    try{Send-FGNavTrace 'uia_action' @{name=$n;action='Select'}}catch{}
+    # FGDIAG-END
+    $p.Select();return $n}}}catch{}}}}catch{};return $null
 }
 function Test-RangeEvidenceUia($proc){
     try{$root=[System.Windows.Automation.AutomationElement]::FromHandle($proc.MainWindowHandle);$els=$root.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition);for($i=0;$i-lt$els.Count;$i++){try{$n=[string]$els.Item($i).Current.Name;if($n -match '(?i)Driving Range Distance|Quick CTP|Range Width|Green Width'){return $true}}catch{}}}catch{};return $false

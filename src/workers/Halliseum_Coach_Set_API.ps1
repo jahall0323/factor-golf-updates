@@ -5,6 +5,7 @@
 )
 
 $ErrorActionPreference = "SilentlyContinue"
+. (Join-Path $PSScriptRoot "Halliseum_Voice_Recognition.ps1")
 try { Add-Type -AssemblyName System.Speech } catch {}
 try { Add-Type -AssemblyName PresentationFramework } catch {}
 
@@ -526,38 +527,59 @@ if(-not [bool]$config.AutoVoiceFollowup){
     exit 0
 }
 
-Write-Runtime "listening" "Listening for a follow-up. Say 'back to golf' anytime."
+$voiceOptions=Get-FGVoiceOptions $config
+$voiceDiagnosticPath=Join-Path $out 'voice_recognition_status.json'
+$script:voiceEngineId='';$script:voiceCulture='en-US'
+function Write-VoiceDiagnostic($event){
+    try{
+        [ordered]@{request_id=$requestId;updated=(Get-Date).ToString('o');input='Windows default audio input';engine_id=$script:voiceEngineId;culture=$script:voiceCulture;min_confidence=$voiceOptions.minConfidence;silence_seconds=$voiceOptions.silenceSeconds;event=$event}|ConvertTo-Json -Depth 6|Set-Content $voiceDiagnosticPath -Encoding UTF8 -ErrorAction Stop
+    }catch{}
+}
 $history=New-Object System.Collections.Generic.List[object]
 $turn=0
 $recognizer=$null
 try {
-    Add-Type -AssemblyName System.Speech
+    Add-Type -AssemblyName System.Speech -ErrorAction Stop
     $culture=[Globalization.CultureInfo]::GetCultureInfo("en-US")
-    $recognizer=New-Object System.Speech.Recognition.SpeechRecognitionEngine($culture)
+    $recognizer=New-Object System.Speech.Recognition.SpeechRecognitionEngine($culture) -ErrorAction Stop
+    $script:voiceEngineId=[string]$recognizer.RecognizerInfo.Id
+    $script:voiceCulture=[string]$recognizer.RecognizerInfo.Culture.Name
     $recognizer.SetInputToDefaultAudioDevice()
-    $grammar=New-Object System.Speech.Recognition.DictationGrammar
+    $grammar=New-Object System.Speech.Recognition.DictationGrammar -ErrorAction Stop
     $recognizer.LoadGrammar($grammar)
+    $recognizer.LoadGrammar((New-FGVoiceExitGrammar $culture))
+    Write-VoiceDiagnostic ([pscustomobject]@{state='ready'})
 } catch {
+    Write-VoiceDiagnostic ([pscustomobject]@{state='initialization_failed';error=$_.Exception.Message})
+    if($recognizer){try{$recognizer.Dispose()}catch{}}
     $recognizer=$null
 }
 
 if(-not $recognizer){
-    Write-Runtime "mic_unavailable" "Windows speech recognition could not open the default microphone. Card will close automatically."
-    Start-Sleep -Seconds ([int]$config.VoiceSilenceSeconds)
-    Write-Runtime "idle" "Coaching complete." $true
+    Write-Runtime "mic_unavailable" "Voice follow-up could not start. Check the Windows default microphone and installed English (US) speech recognition. Details were saved."
+    Start-Sleep -Seconds $voiceOptions.silenceSeconds
+    Write-Runtime "idle" "Voice follow-up unavailable. Returning to GSPro." $true
     Restore-GSProFocus
     exit 0
 }
 
-$maxTurns=8;try{$maxTurns=[int]$config.VoiceMaxFollowups}catch{};if($maxTurns -lt 1){$maxTurns=8}
-$minConfidence=0.48;try{$minConfidence=[double]$config.VoiceRecognitionMinConfidence}catch{}
-while($turn -lt $maxTurns){
-    $result=$null
-    try{$result=$recognizer.Recognize([TimeSpan]::FromSeconds([int]$config.VoiceSilenceSeconds))}catch{}
-    if(-not $result -or -not $result.Text){break}
-    if($result.Confidence -lt $minConfidence){Write-Runtime 'listening' 'I did not catch that clearly. Try again, or say back to golf.';continue}
-    $q=[string]$result.Text
-    if($q -match "(?i)^\s*(back to golf|close( the)? coach|done|i'?m good|im good|that'?s all|that is all)\s*[.!]?\s*$"){break}
+Write-Runtime "listening" "Listening for a follow-up. Say 'back to golf' anytime."
+$voiceCompletionMessage='Coaching conversation complete. Returning to GSPro.'
+try{
+while($turn -lt $voiceOptions.maxTurns){
+    $heard=Read-FGVoiceTurn $recognizer $voiceOptions {
+        param($event)
+        Write-VoiceDiagnostic $event
+        if($event.state -eq 'retry'){
+            Write-Runtime 'listening' ("Speech confidence {0:P0} is below the question threshold {1:P0} (attempt {2} of 3). Speak toward the Windows default microphone, or say back to golf." -f $event.confidence,$voiceOptions.minConfidence,$event.attempt)
+        }
+    }
+    if($heard.action -ne 'question'){
+        if($heard.action -eq 'exhausted'){$voiceCompletionMessage='Voice follow-up stopped after three unclear attempts. Check the Windows default microphone. Recognition details were saved. Returning to GSPro.'}
+        elseif($heard.action -eq 'error'){$voiceCompletionMessage='Voice recognition stopped with an error. Recognition details were saved. Returning to GSPro.'}
+        break
+    }
+    $q=$heard.text
     $turn++
     Write-Runtime "thinking_followup" ("Heard: "+$q+"  |  Coach is answering.")
     $complex=($q -match "(?i)\b(why|analy|swing|path|spin|tempo|attack|aoa|smash|contact|compare|cause|fix|setup|ball position|stance)\b")
@@ -585,8 +607,8 @@ Never invent face angle or face-to-path data. Distinguish reference setup advice
         break
     }
 }
-try{$recognizer.Dispose()}catch{}
-Write-Runtime "idle" "Coaching conversation complete. Returning to GSPro." $true
+}finally{try{$recognizer.Dispose()}catch{}}
+Write-Runtime "idle" $voiceCompletionMessage $true
 Start-Sleep -Milliseconds 500
 Restore-GSProFocus
 exit 0

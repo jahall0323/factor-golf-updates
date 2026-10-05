@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $failures = @()
-$files = @(Get-ChildItem (Join-Path $root 'src') -Filter '*.ps1' -Recurse)
+$files = @(foreach($folder in @('src','tests','packaging')){Get-ChildItem (Join-Path $root $folder) -Filter '*.ps1' -Recurse})
 foreach ($file in $files) {
     $tokens = $null
     $parseErrors = $null
