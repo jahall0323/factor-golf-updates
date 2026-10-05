@@ -1,0 +1,29 @@
+{
+  "product": "Factor Golf Quick Coach Beta",
+  "channel": "beta",
+  "version": "0.1.5",
+  "release_status": "candidate",
+  "notes": "Lifecycle/UI/diagnostics fixes plus Beta-channel one-click updater policy.",
+  "files": [
+    {
+      "path": "QuickCoach.ps1",
+      "url": "https://raw.githubusercontent.com/jahall0323/factor-golf-updates/main/quick-coach-beta/releases/v0.1.5/QuickCoach.ps1",
+      "sha256": "2e34aeeadc2132002241be8b130952c7a19d799f9a962f1fe1d9400f7d0d39a6"
+    },
+    {
+      "path": "Launch_Quick_Coach.vbs",
+      "url": "https://raw.githubusercontent.com/jahall0323/factor-golf-updates/main/quick-coach-beta/releases/v0.1.5/Launch_Quick_Coach.vbs",
+      "sha256": "4a4b2ec63a2e1462ec5a097263dc012679b4daeedbcfabdc6b808c2b56af69a4"
+    },
+    {
+      "path": "config.default.json",
+      "url": "https://raw.githubusercontent.com/jahall0323/factor-golf-updates/main/quick-coach-beta/releases/v0.1.5/config.default.json",
+      "sha256": "e7e8b0439671af65574b001c2a8af7d4775d5e9b99608a0df1b7d1c6f769645a"
+    },
+    {
+      "path": "README.txt",
+      "url": "https://raw.githubusercontent.com/jahall0323/factor-golf-updates/main/quick-coach-beta/releases/v0.1.5/README.txt",
+      "sha256": "f9ec221522efc09019311b41cb0827731933312bb49a5bebfa235be1953f0ef8"
+    }
+  ]
+}
