@@ -36,6 +36,7 @@ $events.Clear()
 $fake=FakeRecognizer @((Result 'noise' 0.1),(Result 'noise' 0.1),(Result 'noise' 0.1))
 Assert ((Read-FGVoiceTurn $fake $options $report).action -eq 'exhausted') 'Repeated low confidence must terminate'
 Assert ($fake.calls -eq 3 -and $events[-1].state -eq 'retries_exhausted') 'Retry bound and final diagnosis must be exact'
+Assert ($events[-1].confidence -eq 0.1 -and $events[-1].text -eq 'noise') 'Terminal diagnosis must retain the rejected recognition evidence'
 $fake=FakeRecognizer @((Result 'back to golf' 0.1),$null)
 Assert ((Read-FGVoiceTurn $fake $options $report).action -eq 'silence') 'Very low-confidence exit must not be treated as a question or trusted command'
 $fake=FakeRecognizer @((Result 'why does back to golf close the card' 0.8))

@@ -11,7 +11,7 @@
   },
   "workers/Halliseum_Voice_Recognition.ps1": {
     "baseline_sha256": null,
-    "candidate_sha256": "64c86ee4ec166413992b582704ba92158cf54e94715bf2dc6bc7d9a797447862",
+    "candidate_sha256": "881833bd455a8499a028a99618c391a2b8063d89ebaffa7f315d4079f9d9d2a9",
     "reason": "Bound recognition failures, load explicit exit grammar, preserve useful diagnostics and dispose recognition resources."
   }
 }

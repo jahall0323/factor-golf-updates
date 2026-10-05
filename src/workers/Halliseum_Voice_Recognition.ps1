@@ -36,6 +36,6 @@ function Read-FGVoiceTurn($Recognizer,$Options,[scriptblock]$Report){
   & $Report ([pscustomobject]@{state=$action;attempt=$attempt;text=$text;confidence=$confidence;threshold=$Options.minConfidence;grammar=[string]$result.Grammar.Name})
   if($action -ne 'retry'){return [pscustomobject]@{action=$action;text=$text}}
  }
- & $Report ([pscustomobject]@{state='retries_exhausted';attempt=$Options.maxRejections})
+ & $Report ([pscustomobject]@{state='retries_exhausted';attempt=$Options.maxRejections;text=$text;confidence=$confidence;threshold=$Options.minConfidence;grammar=[string]$result.Grammar.Name})
  return [pscustomobject]@{action='exhausted';text=''}
 }
