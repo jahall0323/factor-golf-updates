@@ -15,6 +15,13 @@ jobs:
       - name: Windows PowerShell 5.1 syntax
         shell: powershell
         run: ./tools/check_powershell.ps1
+  voice-recognition:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Voice recognition recovery contracts
+        shell: powershell
+        run: ./tests/test_voice_recognition.ps1
   install-update:
     runs-on: windows-latest
     steps:
