@@ -6,7 +6,7 @@ New-Item $temp -ItemType Directory|Out-Null
 $env:LOCALAPPDATA=Join-Path $temp 'local';New-Item $env:LOCALAPPDATA -ItemType Directory|Out-Null
 function Get-CimInstance{param($ClassName) return @()}
 function Start-Sleep{param($Seconds,$Milliseconds)}
-function Start-Process{param($FilePath,$ArgumentList) $script:launches++}
+function Start-Process{param($FilePath,$ArgumentList) $global:FGCandidateLaunches++}
 function Assert($condition,$message){if(-not$condition){throw $message}}
 try{
  $bundle=Join-Path $temp 'extracted';Expand-Archive (Join-Path $repo 'dist\Factor_Golf_Halliseum_Candidate_1.zip') $bundle
@@ -19,9 +19,9 @@ try{
  $preserved=@{};foreach($name in @('config.json','secrets\fixture.dpapi','learned\bag.json')){$preserved[$name]=(Get-FileHash (Join-Path $app $name)).Hash}
  foreach($from in @('0.8.14','0.8.15','0.8.14')){
   Set-Content (Join-Path $app 'app_version.txt') $from
-  $script:launches=0
+  $global:FGCandidateLaunches=0
   & (Join-Path $bundle 'Install_Candidate.ps1') -AppDir $app
-  Assert ($script:launches -eq 1) 'Expected one intercepted relaunch'
+  Assert ($global:FGCandidateLaunches -eq 1) 'Expected one intercepted relaunch'
   foreach($name in $preserved.Keys){Assert ((Get-FileHash (Join-Path $app $name)).Hash -eq $preserved[$name]) "User data changed: $name"}
   $build=Get-Content (Join-Path $app 'candidate_build.json') -Raw|ConvertFrom-Json
   Assert ($build.candidate_id -eq '0.8.14-halliseum-candidate.1') 'Installed candidate identity missing'
@@ -31,10 +31,10 @@ try{
  foreach($file in @('candidate-payload.zip','Bootstrap_Update.ps1')){
   $path=Join-Path $bundle $file;$bytes=[IO.File]::ReadAllBytes($path)
   try{
-   [IO.File]::AppendAllText($path,'tamper');$rejected=$false;$script:launches=0
+   [IO.File]::AppendAllText($path,'tamper');$rejected=$false;$global:FGCandidateLaunches=0
    try{& (Join-Path $bundle 'Install_Candidate.ps1') -AppDir $app}catch{$rejected=$_.Exception.Message -match 'integrity check failed'}
    Assert $rejected 'Tampered candidate was not rejected'
-   Assert ($script:launches -eq 0) 'Tampered candidate launched app'
+   Assert ($global:FGCandidateLaunches -eq 0) 'Tampered candidate launched app'
    Assert ((Get-FileHash (Join-Path $app 'workers\Halliseum_Range_Nav.ps1')).Hash -eq $installedHash) 'Rejected candidate changed app'
   }finally{[IO.File]::WriteAllBytes($path,$bytes)}
  }
