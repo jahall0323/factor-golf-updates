@@ -15,3 +15,54 @@ jobs:
       - name: Windows PowerShell 5.1 syntax
         shell: powershell
         run: ./tools/check_powershell.ps1
+  club-detection:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Club detection feedback and verification contracts
+        shell: powershell
+        run: ./tests/test_club_detection.ps1
+  integration:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Voice recognition contracts
+        shell: powershell
+        run: ./tests/test_voice_recognition.ps1
+      - name: Navigation instrumentation contracts
+        shell: powershell
+        run: ./tests/test_navigation_diagnostics.ps1
+      - name: Build integration candidate
+        run: python tools/build_candidate.py --source-commit ${{ github.sha }}
+      - name: Install the actual candidate in isolation
+        shell: powershell
+        run: ./tests/test_candidate_install.ps1
+  candidate-artifact:
+    needs: [static, club-detection, integration, install-update]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/build_candidate.py --source-commit ${{ github.sha }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: halliseum-integration-candidate-1
+          path: dist/*
+          retention-days: 90
+  install-update:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Isolated install and update contracts
+        shell: powershell
+        run: ./tests/test_install_update.ps1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: install-update-results
+          path: install-update-results.json
