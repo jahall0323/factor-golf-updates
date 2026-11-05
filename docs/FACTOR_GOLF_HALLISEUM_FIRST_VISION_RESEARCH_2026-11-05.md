@@ -35,11 +35,15 @@ Do not convert the project into an unmaintainable collection of timing hacks in 
 - Recommend GSPro bag-distance review when demonstrated **current total distances** diverge from configured GSPro bag mapping; do not silently change GSPro's settings.
 - Keep a visible reason for alerts: sample counts, date windows, old/new distributions, confidence and exclusion rules.
 
-### Live Caddie
-- While playing GSPro, advise club selection **from current personal distances and dispersion**, ideally given current lie, distance to target, wind, elevation and safe miss.
+### Live Caddie — PRE-SHOT CONTEXT IS A CORE REQUIREMENT
+- **Before the golfer hits**, while GSPro displays the shot setup, Factor Golf must read or observe the *current active player, selected club, hole, ball position/lie, current aim or target, distance to pin or selected target, target-versus-ball elevation difference, wind and hazard/landing context*, to the extent each field is actually available.
+- Automatically re-evaluate the recommendation when the golfer changes club, moves the GSPro aim point, a new shot/lie loads, or environmental conditions change. Advice must be ready **before impact**; post-shot data alone is insufficient for the intended Live Caddie.
+- Example desired behavior: "You're aiming at a pin about 20 feet below your current lie. With your current 8-iron distance and typical dispersion, consider clubbing down." This is an illustrative conversational requirement, **not** a universal rule that 20 feet downhill always means one less club. The recommendation must account for measured personal distances, elevation adjustment, wind, lie, rollout, hazards and confidence.
+- Advise club selection **from current personal distances and dispersion**, not static historical GSPro bag settings. Clearly distinguish carry, total, and effective playing distance, including the source and units of the reported elevation.
+- Spoken recommendations should be concise and appropriately timed; answer natural follow-ups like "Why the 8-iron?" and "What if I aim left?" without disturbing the GSPro controls.
 - Caddie should follow round transitions and player/shot events without requiring manual per-shot input.
-- **Hard feasibility gate:** Confirm where reliable *pre-shot* hole/target/lie/conditions data comes from. The post-shot telemetry stream alone is insufficient to promise a real-time hazard-aware caddie.
-- If required context is unavailable, do not invent hazard, wind or pin details; give a limited distance-only recommendation or say it is unavailable.
+- **Hard feasibility gate:** Confirm where reliable *live pre-shot* hole/target/lie/elevation/wind/hazard data comes from and whether aim-point changes can be observed. The post-shot telemetry stream alone is insufficient. GSPro's Open Connect V1 documents launch monitor input, **not** a passive pre-shot state feed for companions.
+- If any required context is unavailable, do not invent elevation, hazard, wind or pin details; give a qualified distance-only recommendation or say what information is missing.
 - Preserve normal tournament/round behavior: no shot spoofing, automatic gameplay input or alterations to GSPro.
 
 ### On-demand video coaching
@@ -172,6 +176,14 @@ The local collection and storage system must remain useful if cloud AI is tempor
 - Automated tests and code review before candidate packaging; final hardware validation at the Halliseum; no promotion of a previously failed build.
 - Continue honoring prior accepted v0.8.14 behavior **until** an intentional replacement is accepted; keep a rollback path.
 - Avoid replacing a stable component merely to create a 'modern' tech stack. Assess a maintainable Windows local service and UI architecture when implementation begins.
+
+
+
+### Product acceptance gate: pre-shot coaching
+- While a real GSPro course hole is loaded **before any new shot**, capture trustworthy current pin/target distance and elevation delta, with timestamps and source. If the golfer changes aim, show a corresponding data refresh before impact.
+- Demonstrate an actual spoken club recommendation referencing Josh's latest statistically reliable club performance and the current uphill/downhill difference, with no invented club or conditions.
+- Test a 20-foot-downhill case and a 20-foot-uphill case; expected club choice is **calculated from the context**, never hard-coded from the elevation alone.
+- If the source cannot prove elevation or target state, the UI must visibly mark it unavailable, and voice advice must not masquerade as course-aware.
 
 ## 7. Unresolved questions that engineering must solve without dumping routine work on Josh
 
